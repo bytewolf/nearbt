@@ -30,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CBPeripheralManagerDelega
 
     var peripheralManager: CBPeripheralManager!
     var characteristic: CBMutableCharacteristic!
+    var cachedToken: OTPToken? = nil
     
     func getNewCharacteristicValue() -> NSData? {
         if NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyEnabled) == false {
@@ -38,14 +39,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CBPeripheralManagerDelega
         guard let keychainItemRef = NSUserDefaults.standardUserDefaults().objectForKey(userDefaultsKeyTokenRef) as? NSData else {
             return nil
         }
-        let otpToken = OTPToken(keychainItemRef: keychainItemRef)
-        guard otpToken != nil else {
+        let tokenInKeychain = OTPToken(keychainItemRef: keychainItemRef)
+        if tokenInKeychain != nil {
+            cachedToken = tokenInKeychain
+        }
+        guard let token = cachedToken else {
             return nil
         }
-        otpToken.updatePassword()
-        let result = otpToken.password.dataUsingEncoding(NSUTF8StringEncoding)!
-        otpToken.saveToKeychain()
-        NSUserDefaults.standardUserDefaults().setObject(otpToken.keychainItemRef, forKey: userDefaultsKeyTokenRef)
+        token.updatePassword()
+        let result = token.password.dataUsingEncoding(NSUTF8StringEncoding)!
+        token.saveToKeychain()
+        NSUserDefaults.standardUserDefaults().setObject(token.keychainItemRef, forKey: userDefaultsKeyTokenRef)
         return result
     }
 

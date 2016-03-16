@@ -1,0 +1,381 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BD05FB0C1C981E130067475F /* pam_nearbt.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5051C97889B0055FB3F /* pam_nearbt.m */; };
+		BD1306811C978D26008BA36B /* bt-test.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5001C97888E0055FB3F /* bt-test.m */; };
+		BD1306821C978D3A008BA36B /* NBTCentralController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5031C97889B0055FB3F /* NBTCentralController.m */; };
+		BD1306841C978D55008BA36B /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E50D1C9789050055FB3F /* Constants.m */; };
+		BD452C4E1C997F2800FE7332 /* liboath.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD452C4D1C997F2800FE7332 /* liboath.dylib */; };
+		BD45E5061C97889B0055FB3F /* NBTCentralController.h in Headers */ = {isa = PBXBuildFile; fileRef = BD45E5021C97889B0055FB3F /* NBTCentralController.h */; };
+		BD45E5071C97889B0055FB3F /* NBTCentralController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5031C97889B0055FB3F /* NBTCentralController.m */; };
+		BD45E5081C97889B0055FB3F /* oath.h in Headers */ = {isa = PBXBuildFile; fileRef = BD45E5041C97889B0055FB3F /* oath.h */; };
+		BD45E5091C97889B0055FB3F /* pam_nearbt.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5051C97889B0055FB3F /* pam_nearbt.m */; };
+		BD45E50E1C9789050055FB3F /* Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = BD45E50C1C9789050055FB3F /* Constants.h */; };
+		BD45E50F1C9789050055FB3F /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E50D1C9789050055FB3F /* Constants.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BD1306781C978D20008BA36B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		BD13067A1C978D20008BA36B /* bt-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "bt-test"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD452C4D1C997F2800FE7332 /* liboath.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liboath.dylib; path = /usr/local/lib/liboath.dylib; sourceTree = "<absolute>"; };
+		BD45E4F81C97882A0055FB3F /* pam_nearbt.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pam_nearbt.so; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD45E5001C97888E0055FB3F /* bt-test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "bt-test.m"; path = "pam_nearbt/bt-test.m"; sourceTree = "<group>"; };
+		BD45E5021C97889B0055FB3F /* NBTCentralController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NBTCentralController.h; path = pam_nearbt/NBTCentralController.h; sourceTree = "<group>"; };
+		BD45E5031C97889B0055FB3F /* NBTCentralController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NBTCentralController.m; path = pam_nearbt/NBTCentralController.m; sourceTree = "<group>"; };
+		BD45E5041C97889B0055FB3F /* oath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = oath.h; path = pam_nearbt/oath.h; sourceTree = "<group>"; };
+		BD45E5051C97889B0055FB3F /* pam_nearbt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = pam_nearbt.m; path = pam_nearbt/pam_nearbt.m; sourceTree = "<group>"; };
+		BD45E50C1C9789050055FB3F /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		BD45E50D1C9789050055FB3F /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BD1306771C978D20008BA36B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD45E4F51C97882A0055FB3F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD452C4E1C997F2800FE7332 /* liboath.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BD45E4EF1C97882A0055FB3F = {
+			isa = PBXGroup;
+			children = (
+				BD45E50C1C9789050055FB3F /* Constants.h */,
+				BD45E50D1C9789050055FB3F /* Constants.m */,
+				BD45E4FF1C97887D0055FB3F /* pam_nearbt */,
+				BD45E4F91C97882A0055FB3F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BD45E4F91C97882A0055FB3F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BD45E4F81C97882A0055FB3F /* pam_nearbt.so */,
+				BD13067A1C978D20008BA36B /* bt-test */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BD45E4FF1C97887D0055FB3F /* pam_nearbt */ = {
+			isa = PBXGroup;
+			children = (
+				BD45E5021C97889B0055FB3F /* NBTCentralController.h */,
+				BD45E5031C97889B0055FB3F /* NBTCentralController.m */,
+				BD45E5041C97889B0055FB3F /* oath.h */,
+				BD452C4D1C997F2800FE7332 /* liboath.dylib */,
+				BD45E5001C97888E0055FB3F /* bt-test.m */,
+				BD45E5051C97889B0055FB3F /* pam_nearbt.m */,
+			);
+			name = pam_nearbt;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		BD45E4F61C97882A0055FB3F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD45E5081C97889B0055FB3F /* oath.h in Headers */,
+				BD45E5061C97889B0055FB3F /* NBTCentralController.h in Headers */,
+				BD45E50E1C9789050055FB3F /* Constants.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		BD1306791C978D20008BA36B /* bt-test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD13067E1C978D20008BA36B /* Build configuration list for PBXNativeTarget "bt-test" */;
+			buildPhases = (
+				BD1306761C978D20008BA36B /* Sources */,
+				BD1306771C978D20008BA36B /* Frameworks */,
+				BD1306781C978D20008BA36B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "bt-test";
+			productName = "bt-test";
+			productReference = BD13067A1C978D20008BA36B /* bt-test */;
+			productType = "com.apple.product-type.tool";
+		};
+		BD45E4F71C97882A0055FB3F /* pam_nearbt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD45E4FC1C97882A0055FB3F /* Build configuration list for PBXNativeTarget "pam_nearbt" */;
+			buildPhases = (
+				BD45E4F41C97882A0055FB3F /* Sources */,
+				BD45E4F51C97882A0055FB3F /* Frameworks */,
+				BD45E4F61C97882A0055FB3F /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = pam_nearbt;
+			productName = pam_nearbt;
+			productReference = BD45E4F81C97882A0055FB3F /* pam_nearbt.so */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BD45E4F01C97882A0055FB3F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = guoc;
+				TargetAttributes = {
+					BD1306791C978D20008BA36B = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+					BD45E4F71C97882A0055FB3F = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+				};
+			};
+			buildConfigurationList = BD45E4F31C97882A0055FB3F /* Build configuration list for PBXProject "pam_nearbt" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = BD45E4EF1C97882A0055FB3F;
+			productRefGroup = BD45E4F91C97882A0055FB3F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BD45E4F71C97882A0055FB3F /* pam_nearbt */,
+				BD1306791C978D20008BA36B /* bt-test */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BD1306761C978D20008BA36B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD05FB0C1C981E130067475F /* pam_nearbt.m in Sources */,
+				BD1306811C978D26008BA36B /* bt-test.m in Sources */,
+				BD1306821C978D3A008BA36B /* NBTCentralController.m in Sources */,
+				BD1306841C978D55008BA36B /* Constants.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD45E4F41C97882A0055FB3F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD45E5091C97889B0055FB3F /* pam_nearbt.m in Sources */,
+				BD45E5071C97889B0055FB3F /* NBTCentralController.m in Sources */,
+				BD45E50F1C9789050055FB3F /* Constants.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		BD13067F1C978D20008BA36B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/pam_nearbt",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		BD1306801C978D20008BA36B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/pam_nearbt",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		BD45E4FA1C97882A0055FB3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		BD45E4FB1C97882A0055FB3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		BD45E4FD1C97882A0055FB3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
+				INSTALL_GROUP = wheel;
+				INSTALL_MODE_FLAG = "u+r,go+r,a-wx";
+				INSTALL_OWNER = root;
+				INSTALL_PATH = /usr/lib/pam;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		BD45E4FE1C97882A0055FB3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_EXTENSION = so;
+				EXECUTABLE_PREFIX = "";
+				INSTALL_GROUP = wheel;
+				INSTALL_MODE_FLAG = "u+r,go+r,a-wx";
+				INSTALL_OWNER = root;
+				INSTALL_PATH = /usr/lib/pam;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BD13067E1C978D20008BA36B /* Build configuration list for PBXNativeTarget "bt-test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD13067F1C978D20008BA36B /* Debug */,
+				BD1306801C978D20008BA36B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BD45E4F31C97882A0055FB3F /* Build configuration list for PBXProject "pam_nearbt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD45E4FA1C97882A0055FB3F /* Debug */,
+				BD45E4FB1C97882A0055FB3F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BD45E4FC1C97882A0055FB3F /* Build configuration list for PBXNativeTarget "pam_nearbt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD45E4FD1C97882A0055FB3F /* Debug */,
+				BD45E4FE1C97882A0055FB3F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BD45E4F01C97882A0055FB3F /* Project object */;
+}

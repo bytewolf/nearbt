@@ -14,10 +14,16 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var informationLabel: UILabel!
     @IBOutlet weak var setSecretButton: UIButton!
     @IBOutlet weak var enabledSwitch: UISwitch!
+    @IBOutlet weak var tokenCacheRequiredSwitch: UISwitch!
     @IBOutlet weak var invisibleTextField: UITextField! {
         didSet {
             invisibleTextField.delegate = self
         }
+    }
+    
+    @IBAction func tokenCacheRequiredSwitchValueChanged(sender: UISwitch) {
+        NSUserDefaults.standardUserDefaults().setBool(tokenCacheRequiredSwitch.on, forKey: userDefaultsKeyTokenCacheRequired)
+        resetViewAnimated(true)
     }
     
     @IBAction func setSecretButtonPressed() {
@@ -25,13 +31,17 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func enabledSwitchValueChanged() {
+        
         NSUserDefaults.standardUserDefaults().setBool(enabledSwitch.on, forKey: userDefaultsKeyEnabled)
-        resetView()
+        resetViewAnimated(true)
     }
     
-    func resetView() {
+    func resetViewAnimated(animated: Bool) {
         let enabled = NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyEnabled)
-        enabledSwitch.setOn(enabled, animated: false)
+        enabledSwitch.setOn(enabled, animated: animated)
+        
+        let tokenCacheRequired = NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyTokenCacheRequired)
+        tokenCacheRequiredSwitch.setOn(tokenCacheRequired, animated: animated)
         
         let tokenRefExisted = (NSUserDefaults.standardUserDefaults().objectForKey(userDefaultsKeyTokenRef) != nil)
         enabledSwitch.enabled = tokenRefExisted
@@ -55,21 +65,21 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        resetView()
+        resetViewAnimated(false)
     }
     
     func textFieldDidBeginEditing(textField: UITextField) {
-        resetView()
+        resetViewAnimated(true)
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         invisibleTextField.resignFirstResponder()
         guard let secretString = textField.text else {
-            resetView()
+            resetViewAnimated(true)
             return true
         }
         guard !secretString.isEmpty else {
-            resetView()
+            resetViewAnimated(true)
             informationLabel.text = "Cancelled."
             return true
         }
@@ -80,7 +90,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             return true
         }
         NSUserDefaults.standardUserDefaults().setObject(otpToken.keychainItemRef, forKey: userDefaultsKeyTokenRef)
-        resetView()
+        resetViewAnimated(true)
         informationLabel.text = "Secret changed."
         return true
     }

@@ -14,6 +14,7 @@ let serviceUUID = CBUUID(string: kServiceUUID)
 let characteristicUUID = CBUUID(string: kCharacteristicUUID)
 let userDefaultsKeyTokenRef = "keychainRefOfToken"
 let userDefaultsKeyEnabled = "enabled"
+let userDefaultsKeyTokenCacheRequired = "tokenCacheRequired"
 var enabled: Bool {
     get {
         return NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyEnabled)
@@ -40,10 +41,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CBPeripheralManagerDelega
             return nil
         }
         let tokenInKeychain = OTPToken(keychainItemRef: keychainItemRef)
-        if tokenInKeychain != nil {
+        let tokenCacheRequired = NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyTokenCacheRequired)
+        if tokenCacheRequired && tokenInKeychain != nil {
             cachedToken = tokenInKeychain
         }
-        guard let token = cachedToken else {
+        guard let token = tokenCacheRequired ? cachedToken : tokenInKeychain else {
             return nil
         }
         token.updatePassword()
@@ -129,7 +131,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CBPeripheralManagerDelega
 
     func applicationDidBecomeActive(application: UIApplication) {
         if let viewController = window?.rootViewController as? ViewController {
-            viewController.resetView()
+            viewController.resetViewAnimated(true)
         }
     }
 

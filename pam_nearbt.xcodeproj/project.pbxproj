@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		BD05FB0C1C981E130067475F /* pam_nearbt.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5051C97889B0055FB3F /* pam_nearbt.m */; };
-		BD0F25E21C9A5E1D003357F9 /* liboath.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD452C4D1C997F2800FE7332 /* liboath.dylib */; };
+		BD0F25E81C9A95CA003357F9 /* liboath.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD0F25E71C9A95CA003357F9 /* liboath.dylib */; };
+		BD0F25E91C9A95D3003357F9 /* liboath.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD0F25E71C9A95CA003357F9 /* liboath.dylib */; };
 		BD1306811C978D26008BA36B /* bt-test.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5001C97888E0055FB3F /* bt-test.m */; };
 		BD1306821C978D3A008BA36B /* NBTCentralController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5031C97889B0055FB3F /* NBTCentralController.m */; };
 		BD1306841C978D55008BA36B /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E50D1C9789050055FB3F /* Constants.m */; };
-		BD452C4E1C997F2800FE7332 /* liboath.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD452C4D1C997F2800FE7332 /* liboath.dylib */; };
 		BD45E5061C97889B0055FB3F /* NBTCentralController.h in Headers */ = {isa = PBXBuildFile; fileRef = BD45E5021C97889B0055FB3F /* NBTCentralController.h */; };
 		BD45E5071C97889B0055FB3F /* NBTCentralController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5031C97889B0055FB3F /* NBTCentralController.m */; };
 		BD45E5081C97889B0055FB3F /* oath.h in Headers */ = {isa = PBXBuildFile; fileRef = BD45E5041C97889B0055FB3F /* oath.h */; };
@@ -34,8 +34,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BD0F25E71C9A95CA003357F9 /* liboath.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liboath.dylib; path = pam_nearbt/liboath.dylib; sourceTree = "<group>"; };
 		BD13067A1C978D20008BA36B /* bt-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "bt-test"; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD452C4D1C997F2800FE7332 /* liboath.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liboath.dylib; path = /usr/local/lib/liboath.dylib; sourceTree = "<absolute>"; };
 		BD45E4F81C97882A0055FB3F /* pam_nearbt.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pam_nearbt.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD45E5001C97888E0055FB3F /* bt-test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "bt-test.m"; path = "pam_nearbt/bt-test.m"; sourceTree = "<group>"; };
 		BD45E5021C97889B0055FB3F /* NBTCentralController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NBTCentralController.h; path = pam_nearbt/NBTCentralController.h; sourceTree = "<group>"; };
@@ -51,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BD0F25E21C9A5E1D003357F9 /* liboath.dylib in Frameworks */,
+				BD0F25E91C9A95D3003357F9 /* liboath.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BD452C4E1C997F2800FE7332 /* liboath.dylib in Frameworks */,
+				BD0F25E81C9A95CA003357F9 /* liboath.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,7 +91,7 @@
 				BD45E5021C97889B0055FB3F /* NBTCentralController.h */,
 				BD45E5031C97889B0055FB3F /* NBTCentralController.m */,
 				BD45E5041C97889B0055FB3F /* oath.h */,
-				BD452C4D1C997F2800FE7332 /* liboath.dylib */,
+				BD0F25E71C9A95CA003357F9 /* liboath.dylib */,
 				BD45E5001C97888E0055FB3F /* bt-test.m */,
 				BD45E5051C97889B0055FB3F /* pam_nearbt.m */,
 			);
@@ -213,7 +213,7 @@
 			buildSettings = {
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/lib,
+					"$(PROJECT_DIR)/pam_nearbt",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -224,7 +224,7 @@
 			buildSettings = {
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/lib,
+					"$(PROJECT_DIR)/pam_nearbt",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -322,7 +322,7 @@
 				INSTALL_PATH = /usr/lib/pam;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/lib,
+					"$(PROJECT_DIR)/pam_nearbt",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -341,7 +341,7 @@
 				INSTALL_PATH = /usr/lib/pam;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/lib,
+					"$(PROJECT_DIR)/pam_nearbt",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

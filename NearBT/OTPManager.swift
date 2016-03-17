@@ -23,16 +23,16 @@ class OTPManager {
         guard otpToken.saveToKeychain() else {
             fatalError("Fail to save token to keychain")
         }
-        NSUserDefaults.standardUserDefaults().setObject(otpToken.keychainItemRef, forKey: userDefaultsKeyTokenRef)
+        UserDefaults.sharedUserDefaults.tokenRef = otpToken.keychainItemRef
     }
     
     var currentPassword: String! {
-        guard let keychainItemRef = NSUserDefaults.standardUserDefaults().objectForKey(userDefaultsKeyTokenRef) as? NSData else {
+        guard let keychainItemRef = UserDefaults.sharedUserDefaults.tokenRef else {
             assertionFailure("There is no keychain item ref in user defaults.")
             return nil
         }
         let tokenInKeychain = OTPToken(keychainItemRef: keychainItemRef)
-        let tokenCacheRequired = NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyTokenCacheRequired)
+        let tokenCacheRequired = UserDefaults.sharedUserDefaults.tokenCacheRequired
         if tokenCacheRequired && tokenInKeychain != nil {
             OTPManager.cachedToken = tokenInKeychain
         }
@@ -44,7 +44,7 @@ class OTPManager {
         token.updatePassword()
         let result = token.password
         token.saveToKeychain()
-        NSUserDefaults.standardUserDefaults().setObject(token.keychainItemRef, forKey: userDefaultsKeyTokenRef)
+        UserDefaults.sharedUserDefaults.tokenRef = token.keychainItemRef
         return result
     }
 }

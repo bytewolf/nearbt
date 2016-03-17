@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BD0F25E41C9A7183003357F9 /* PeripheralController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0F25E31C9A7183003357F9 /* PeripheralController.swift */; };
+		BD4149061C9B79D300C984C3 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4149051C9B79D300C984C3 /* UserDefaults.swift */; };
 		BD7D810C1C95234500824724 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7D810B1C95234500824724 /* AppDelegate.swift */; };
 		BD7D810E1C95234500824724 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7D810D1C95234500824724 /* ViewController.swift */; };
 		BD7D81111C95234500824724 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD7D810F1C95234500824724 /* Main.storyboard */; };
@@ -20,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		BD0F25E31C9A7183003357F9 /* PeripheralController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeripheralController.swift; sourceTree = "<group>"; };
+		BD4149051C9B79D300C984C3 /* UserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		BD7D81081C95234500824724 /* NearBT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NearBT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD7D810B1C95234500824724 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BD7D810D1C95234500824724 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				BD9DC89A1C9AE74A00CA0FB9 /* OTPManager.swift */,
 				BD0F25E31C9A7183003357F9 /* PeripheralController.swift */,
 				BD7D810D1C95234500824724 /* ViewController.swift */,
+				BD4149051C9B79D300C984C3 /* UserDefaults.swift */,
 				BD7D810F1C95234500824724 /* Main.storyboard */,
 				BD7D81121C95234500824724 /* Assets.xcassets */,
 				BD7D81141C95234500824724 /* LaunchScreen.storyboard */,
@@ -172,6 +175,7 @@
 			files = (
 				BD0F25E41C9A7183003357F9 /* PeripheralController.swift in Sources */,
 				BD7D810E1C95234500824724 /* ViewController.swift in Sources */,
+				BD4149061C9B79D300C984C3 /* UserDefaults.swift in Sources */,
 				BD7D810C1C95234500824724 /* AppDelegate.swift in Sources */,
 				BD9DC89B1C9AE74A00CA0FB9 /* OTPManager.swift in Sources */,
 				BD7D81741C9539F300824724 /* Constants.m in Sources */,

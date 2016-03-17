@@ -8,18 +8,6 @@
 
 import UIKit
 
-let userDefaultsKeyTokenRef = "keychainRefOfToken"
-let userDefaultsKeyEnabled = "enabled"
-let userDefaultsKeyTokenCacheRequired = "tokenCacheRequired"
-var enabled: Bool {
-    get {
-        return NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyEnabled)
-    }
-    set {
-        NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: userDefaultsKeyEnabled)
-    }
-}
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     

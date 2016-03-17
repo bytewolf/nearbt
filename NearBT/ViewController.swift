@@ -22,7 +22,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func tokenCacheRequiredSwitchValueChanged(sender: UISwitch) {
-        NSUserDefaults.standardUserDefaults().setBool(tokenCacheRequiredSwitch.on, forKey: userDefaultsKeyTokenCacheRequired)
+        UserDefaults.sharedUserDefaults.tokenCacheRequired = tokenCacheRequiredSwitch.on
         resetViewAnimated(true)
     }
     
@@ -31,19 +31,18 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func enabledSwitchValueChanged() {
-        
-        NSUserDefaults.standardUserDefaults().setBool(enabledSwitch.on, forKey: userDefaultsKeyEnabled)
+        UserDefaults.sharedUserDefaults.enabled = enabledSwitch.on
         resetViewAnimated(true)
     }
     
     func resetViewAnimated(animated: Bool) {
-        let enabled = NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyEnabled)
+        let enabled = UserDefaults.sharedUserDefaults.enabled
         enabledSwitch.setOn(enabled, animated: animated)
         
-        let tokenCacheRequired = NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyTokenCacheRequired)
+        let tokenCacheRequired = UserDefaults.sharedUserDefaults.tokenCacheRequired
         tokenCacheRequiredSwitch.setOn(tokenCacheRequired, animated: animated)
         
-        let tokenRefExisted = (NSUserDefaults.standardUserDefaults().objectForKey(userDefaultsKeyTokenRef) != nil)
+        let tokenRefExisted = (UserDefaults.sharedUserDefaults.tokenRef != nil)
         enabledSwitch.enabled = tokenRefExisted
         
         if invisibleTextField.editing {

@@ -22,7 +22,9 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     let characteristicUUID = CBUUID(string: kCharacteristicUUID)
     private let timeout = 5.0
     
-    override init() {
+    static let sharedController = PeripheralController()
+    
+    private override init() {
         peripheralManager = CBPeripheralManager(delegate: nil, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
         super.init()
     }

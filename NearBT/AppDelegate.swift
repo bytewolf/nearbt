@@ -13,13 +13,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
 
-    var peripheralController: PeripheralController!
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         let userNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(userNotificationSettings)
-        peripheralController = PeripheralController()
-        peripheralController.start()
+        PeripheralController.sharedController.start()
         return true
     }
 

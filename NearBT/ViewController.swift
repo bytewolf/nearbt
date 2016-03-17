@@ -83,13 +83,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             informationLabel.text = "Cancelled."
             return true
         }
-        let deviceName = UIDevice.currentDevice().name
-        let otpToken = OTPToken(type: .Timer, secret: secretString.dataUsingEncoding(NSUTF8StringEncoding), name: "NearBT Token", issuer: deviceName)
-        guard otpToken.saveToKeychain() else {
-            assertionFailure("Fail to save token to keychain")
-            return true
-        }
-        NSUserDefaults.standardUserDefaults().setObject(otpToken.keychainItemRef, forKey: userDefaultsKeyTokenRef)
+        OTPManager.sharedManager.setSecret(secretString)
         resetViewAnimated(true)
         informationLabel.text = "Secret changed."
         return true

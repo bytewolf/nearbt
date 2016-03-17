@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import OneTimePassword
 
 let userDefaultsKeyTokenRef = "keychainRefOfToken"
 let userDefaultsKeyEnabled = "enabled"
@@ -27,27 +26,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PeripheralControllerDeleg
     var window: UIWindow?
 
     var peripheralController: PeripheralController!
-    var cachedToken: OTPToken? = nil
     
     func getNewCharacteristicValue() -> NSData? {
-        if NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyEnabled) == false {
-            return nil
-        }
-        guard let keychainItemRef = NSUserDefaults.standardUserDefaults().objectForKey(userDefaultsKeyTokenRef) as? NSData else {
-            return nil
-        }
-        let tokenInKeychain = OTPToken(keychainItemRef: keychainItemRef)
-        let tokenCacheRequired = NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyTokenCacheRequired)
-        if tokenCacheRequired && tokenInKeychain != nil {
-            cachedToken = tokenInKeychain
-        }
-        guard let token = tokenCacheRequired ? cachedToken : tokenInKeychain else {
-            return nil
-        }
-        token.updatePassword()
-        let result = token.password.dataUsingEncoding(NSUTF8StringEncoding)!
-        token.saveToKeychain()
-        NSUserDefaults.standardUserDefaults().setObject(token.keychainItemRef, forKey: userDefaultsKeyTokenRef)
+        let result = OTPManager.sharedManager.currentPassword.dataUsingEncoding(NSUTF8StringEncoding)!
         return result
     }
 

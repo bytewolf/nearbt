@@ -292,10 +292,7 @@
 				);
 				INFOPLIST_FILE = NearBT/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/usr/local/Cellar/oath-toolkit/2.6.1/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = name.guoc.NearBT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -315,10 +312,7 @@
 				);
 				INFOPLIST_FILE = NearBT/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"/usr/local/Cellar/oath-toolkit/2.6.1/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = name.guoc.NearBT;
 				PRODUCT_NAME = "$(TARGET_NAME)";

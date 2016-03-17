@@ -21,21 +21,16 @@ var enabled: Bool {
 }
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, PeripheralControllerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
 
     var peripheralController: PeripheralController!
-    
-    func getNewCharacteristicValue() -> NSData? {
-        let result = OTPManager.sharedManager.currentPassword.dataUsingEncoding(NSUTF8StringEncoding)!
-        return result
-    }
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         let userNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(userNotificationSettings)
-        peripheralController = PeripheralController(delegate: self)
+        peripheralController = PeripheralController()
         peripheralController.start()
         return true
     }

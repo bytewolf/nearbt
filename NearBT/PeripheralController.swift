@@ -14,7 +14,6 @@ protocol PeripheralControllerDelegate {
 
 class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     
-    var delegate: PeripheralControllerDelegate
     var peripheralManager: CBPeripheralManager
     var characteristic: CBMutableCharacteristic!
     var group: dispatch_group_t?
@@ -23,9 +22,9 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     let characteristicUUID = CBUUID(string: kCharacteristicUUID)
     private let timeout = 5.0
     
-    init(delegate: PeripheralControllerDelegate) {
-        self.delegate = delegate
+    override init() {
         peripheralManager = CBPeripheralManager(delegate: nil, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
+        super.init()
     }
     
     func start() {
@@ -38,6 +37,11 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
         if (status != 0) {
             assertionFailure("Peripheral fail to start.")
         }
+    }
+    
+    func getNewCharacteristicValue() -> NSData? {
+        let result = OTPManager.sharedManager.currentPassword.dataUsingEncoding(NSUTF8StringEncoding)!
+        return result
     }
     
     func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
@@ -74,7 +78,7 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
             peripheral.respondToRequest(request, withResult: .AttributeNotFound)
             return
         }
-        guard let updatedValue = delegate.getNewCharacteristicValue() else {
+        guard let updatedValue = getNewCharacteristicValue() else {
             peripheral.respondToRequest(request, withResult: .AttributeNotFound)
             return
         }
@@ -92,7 +96,7 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
         guard characteristic.UUID == characteristicUUID else {
             return
         }
-        guard let updatedValue = delegate.getNewCharacteristicValue() else {
+        guard let updatedValue = getNewCharacteristicValue() else {
             return
         }
         let didSendValue = peripheralManager.updateValue(updatedValue, forCharacteristic: self.characteristic, onSubscribedCentrals: nil)
@@ -103,7 +107,7 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     
     func peripheralManagerIsReadyToUpdateSubscribers(peripheral: CBPeripheralManager) {
         // resend
-        guard let updatedValue = delegate.getNewCharacteristicValue() else {
+        guard let updatedValue = getNewCharacteristicValue() else {
             return
         }
         let didSendValue = peripheralManager.updateValue(updatedValue, forCharacteristic: self.characteristic, onSubscribedCentrals: nil)

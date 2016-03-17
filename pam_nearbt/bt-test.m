@@ -19,7 +19,7 @@ const char *testSecretPath = "/usr/local/etc/pam_nearbt/secret";
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        NBTCentralController *controller = [[NBTCentralController alloc] initWithMinimumRSSI:[NSNumber numberWithInt:(testMinimumRSSI)] allowedTimeout:testAllowedTimeout];
+        NBTCentralController *controller = [[NBTCentralController alloc] initWithMinimumRSSI:[NSNumber numberWithInt:(testMinimumRSSI)] timeout:testAllowedTimeout];
         NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID]];
         NSString *secretPath = [NSString stringWithCString:testSecretPath encoding:NSUTF8StringEncoding];
         const char *secret = [[[NSString stringWithContentsOfFile:secretPath encoding:NSUTF8StringEncoding error:nil] stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] UTF8String];

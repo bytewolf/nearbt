@@ -11,7 +11,7 @@
 
 @interface NBTCentralController : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 
-- (instancetype)initWithMinimumRSSI: (NSNumber *)rssi allowedTimeout: (NSUInteger)timeout;
+- (instancetype)initWithMinimumRSSI: (NSNumber *)rssi timeout: (NSUInteger)timeout;
 - (NSData *)readValueForCharacteristicUUID:(CBUUID *)characteristicUUID ofServiceUUID:(CBUUID *)serviceUUID;
 
 @end

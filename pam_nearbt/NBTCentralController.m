@@ -26,7 +26,7 @@
 
 @implementation NBTCentralController
 
-- (instancetype)initWithMinimumRSSI:(NSNumber *)rssi allowedTimeout:(NSUInteger)timeout {
+- (instancetype)initWithMinimumRSSI:(NSNumber *)rssi timeout:(NSUInteger)timeout {
     self = [super init];
     if (self) {
         self.minimumRSSI = rssi;

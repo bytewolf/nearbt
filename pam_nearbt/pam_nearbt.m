@@ -9,12 +9,13 @@
 #import "NBTCentralController.h"
 
 #define DEFAULT_MINIMUM_RSSI (-50)
-#define ALLOWED_TIMEOUT (5)
+#define DEFAULT_TIMEOUT (5)
 
 struct cfg
 {
     BluetoothDeviceAddress bt_addr;
     BluetoothHCIRSSIValue min_rssi;
+    unsigned timeout;
     const char *secret_path;
     const char *run_if_success;
     const char *run_if_fail;
@@ -26,6 +27,7 @@ parse_cfg (int flags, int argc, const char *argv[], struct cfg *cfg)
 {
     memset (cfg, 0, sizeof(struct cfg));
     cfg->min_rssi = DEFAULT_MINIMUM_RSSI;
+    cfg->timeout = DEFAULT_TIMEOUT;
     cfg->secret_path = "/usr/local/etc/pam_nearbt/secret";
     for (int i = 0; i < argc; i++)
     {
@@ -38,6 +40,11 @@ parse_cfg (int flags, int argc, const char *argv[], struct cfg *cfg)
         if (strncmp (argv[i], "min_rssi=", 9) == 0)
         {
             sscanf (argv[i], "min_rssi=%hhd", &cfg->min_rssi);
+        }
+        
+        if (strncmp (argv[i], "timeout=", 8) == 0)
+        {
+            sscanf (argv[i], "timeout=%u", &cfg->timeout);
         }
         
         if (strncmp (argv[i], "secret_path=", 12) == 0)
@@ -106,7 +113,7 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
 
     @autoreleasepool {
         
-        NBTCentralController *controller = [[NBTCentralController alloc] initWithMinimumRSSI:[NSNumber numberWithInt:cfg->min_rssi] allowedTimeout:ALLOWED_TIMEOUT];
+        NBTCentralController *controller = [[NBTCentralController alloc] initWithMinimumRSSI:[NSNumber numberWithInt:cfg->min_rssi] timeout:cfg->timeout];
         
         NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID]];
         if (value == nil) {

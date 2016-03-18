@@ -29,31 +29,7 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     }
     
     var state: State = .Stopped
-    private var recentPeripheralManagerState: CBPeripheralManagerState = .Unknown
-    var bluetoothState: BluetoothState {
-        get {
-            var result = BluetoothState.Unknown
-            
-            switch recentPeripheralManagerState {
-            case .Unknown, .Resetting:
-                result = .Unknown
-            case .Unsupported:
-                result = .Unsupported
-            case .Unauthorized:
-                result = .PairingRequired
-            case .PoweredOff:
-                result = .PowerOff
-            case .PoweredOn:
-                result = .Ready
-            }
-            
-            if result == .Ready && state != .Started {
-                result = .Unknown
-            }
-            
-            return result
-        }
-    }
+    var bluetoothState: BluetoothState = .Unknown
     var peripheralManager: CBPeripheralManager!
     var characteristic: CBMutableCharacteristic!
     
@@ -66,6 +42,9 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     private override init() { super.init() }
     
     func start() {
+        if state == .Started {
+            return
+        }
         state = .Starting
         peripheralManager = CBPeripheralManager(delegate: nil, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
         peripheralManager.delegate = self
@@ -83,7 +62,18 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     }
     
     func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
-        recentPeripheralManagerState = peripheralManager.state
+        switch peripheral.state {
+        case .Unknown, .Resetting:
+            break
+        case .Unsupported:
+            bluetoothState = .Unsupported
+        case .Unauthorized:
+            bluetoothState = .PairingRequired
+        case .PoweredOff:
+            bluetoothState = .PowerOff
+        case .PoweredOn:
+            bluetoothState = .Ready
+        }
         guard (peripheralManager.state == .PoweredOn) else {
             return;
         }

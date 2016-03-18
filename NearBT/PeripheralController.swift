@@ -14,7 +14,14 @@ protocol PeripheralControllerDelegate {
 
 class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     
-    var peripheralManager: CBPeripheralManager
+    enum State {
+        case Stopped
+        case Starting
+        case Started
+    }
+    
+    var state: State = .Stopped
+    var peripheralManager: CBPeripheralManager!
     var characteristic: CBMutableCharacteristic!
     var group: dispatch_group_t?
     
@@ -24,21 +31,31 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     
     static let sharedController = PeripheralController()
     
-    private override init() {
-        peripheralManager = CBPeripheralManager(delegate: nil, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
-        super.init()
-    }
+    private override init() { super.init() }
     
-    func start() {
+    func start() -> Bool {
         group = dispatch_group_create()
         dispatch_group_enter(group!)
+        state = .Starting
+        peripheralManager = CBPeripheralManager(delegate: nil, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
         peripheralManager.delegate = self
         
         let status = dispatch_group_wait(group!, dispatch_time(DISPATCH_TIME_NOW, Int64(timeout * Double(NSEC_PER_SEC))));
         
-        if (status != 0) {
-            assertionFailure("Peripheral fail to start.")
+        if (status == 0) {
+            state = .Started
+            return true
+        } else {
+            state = .Stopped
+            stop()
+            return false
         }
+    }
+    
+    func stop() {
+        state = .Stopped
+        peripheralManager.delegate = nil
+        peripheralManager = nil
     }
     
     func getNewCharacteristicValue() -> NSData? {

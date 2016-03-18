@@ -14,7 +14,6 @@ class OTPManager {
     let keychainAccountName = "name.guoc.NearBT.secret"
     
     static let sharedManager = OTPManager()
-    static var hasSetSecret = false
     
     private init() {}
     
@@ -39,14 +38,14 @@ class OTPManager {
         SecItemDelete(query)
         let status = SecItemAdd(query, nil)
         if (status == errSecSuccess) {
-            OTPManager.hasSetSecret = true
+            UserDefaults.sharedUserDefaults.hasSetSecret = true
         } else {
             fatalError("Fail to save secret in keychain.")
         }
     }
     
     var currentPassword: String? {
-        guard OTPManager.hasSetSecret else {
+        guard UserDefaults.sharedUserDefaults.hasSetSecret else {
             return nil
         }
         let query = [

@@ -18,7 +18,16 @@ class OTPManager {
     
     private init() {}
     
+    private func clear() {
+        let query = [kSecClass as String : kSecClassGenericPassword]
+        let status = SecItemDelete(query)
+        guard status == noErr else {
+            fatalError("Fail to clear keychain.")
+        }
+    }
+    
     func setSecret(secret: String) {
+        clear()
         let secAttrAccessible = UserDefaults.sharedUserDefaults.availableWhenDeviceLocked
                               ? kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
                               : kSecAttrAccessibleWhenUnlockedThisDeviceOnly

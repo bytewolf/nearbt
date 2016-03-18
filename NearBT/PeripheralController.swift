@@ -20,7 +20,40 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
         case Started
     }
     
+    enum BluetoothState {
+        case Unknown
+        case Unsupported
+        case PowerOff
+        case PairingRequired
+        case Ready
+    }
+    
     var state: State = .Stopped
+    private var recentPeripheralManagerState: CBPeripheralManagerState = .Unknown
+    var bluetoothState: BluetoothState {
+        get {
+            var result = BluetoothState.Unknown
+            
+            switch recentPeripheralManagerState {
+            case .Unknown, .Resetting:
+                result = .Unknown
+            case .Unsupported:
+                result = .Unsupported
+            case .Unauthorized:
+                result = .PairingRequired
+            case .PoweredOff:
+                result = .PowerOff
+            case .PoweredOn:
+                result = .Ready
+            }
+            
+            if result == .Ready && state != .Started {
+                result = .Unknown
+            }
+            
+            return result
+        }
+    }
     var peripheralManager: CBPeripheralManager!
     var characteristic: CBMutableCharacteristic!
     var group: dispatch_group_t?
@@ -64,6 +97,7 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     }
     
     func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
+        recentPeripheralManagerState = peripheralManager.state
         guard (peripheralManager.state == .PoweredOn) else {
             return;
         }

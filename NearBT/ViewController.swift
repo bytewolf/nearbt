@@ -35,6 +35,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
         resetViewAnimated(true)
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleBluetoothStateChanged:", name: notificationKeyBluetoothStateChanged, object: nil)
+    }
+    
+    func handleBluetoothStateChanged(notification: NSNotification) {
+        resetViewAnimated(true)
+    }
+    
     func resetViewAnimated(animated: Bool) {
         let enabled = UserDefaults.sharedUserDefaults.enabled
         enabledSwitch.setOn(enabled, animated: animated)
@@ -45,18 +54,29 @@ class ViewController: UIViewController, UITextFieldDelegate {
         let tokenRefExisted = (UserDefaults.sharedUserDefaults.tokenRef != nil)
         enabledSwitch.enabled = tokenRefExisted
         
-        if invisibleTextField.editing {
-            informationLabel.text = "- Type secret and end with return.\n"
-                + "- Secret and your typing will not be displayed.\n"
-                + "- Typing enter directly makes no change."
-        } else if tokenRefExisted {
-            var text = "Tap switch to turn on/off."
-            if enabled {
-                text += "\nReady."
+        switch PeripheralController.sharedController.bluetoothState {
+        case .Unknown:
+            informationLabel.text = "Waiting bluetooth …"
+        case .Unsupported:
+            informationLabel.text = "Bluetooth low energy is not supported."
+        case .PowerOff:
+            informationLabel.text = "Please turn on Bluetooth."
+        case .PairingRequired:
+            informationLabel.text = "Pairing required."
+        case .Ready:
+            if invisibleTextField.editing {
+                informationLabel.text = "- Type secret and end with return.\n"
+                    + "- Secret and your typing will not be displayed.\n"
+                    + "- Typing enter directly makes no change."
+            } else if tokenRefExisted {
+                var text = "Tap switch to turn on/off."
+                if enabled {
+                    text += "\nReady."
+                }
+                informationLabel.text = text
+            } else {
+                informationLabel.text = "Set secret before turning on."
             }
-            informationLabel.text = text
-        } else {
-            informationLabel.text = "Set secret before turning on."
         }
         
         invisibleTextField.text = nil

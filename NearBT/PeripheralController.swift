@@ -12,6 +12,8 @@ protocol PeripheralControllerDelegate {
     func getNewCharacteristicValue() -> NSData?
 }
 
+let notificationKeyBluetoothStateChanged = "kBluetoothStateChanged"
+
 class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     
     enum State {
@@ -29,7 +31,11 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     }
     
     var state: State = .Stopped
-    var bluetoothState: BluetoothState = .Unknown
+    var bluetoothState: BluetoothState = .Unknown {
+        didSet {
+            NSNotificationCenter.defaultCenter().postNotificationName(notificationKeyBluetoothStateChanged, object: self)
+        }
+    }
     var peripheralManager: CBPeripheralManager!
     var characteristic: CBMutableCharacteristic!
     

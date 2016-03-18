@@ -56,7 +56,6 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     }
     var peripheralManager: CBPeripheralManager!
     var characteristic: CBMutableCharacteristic!
-    var group: dispatch_group_t?
     
     let serviceUUID = CBUUID(string: kServiceUUID)
     let characteristicUUID = CBUUID(string: kCharacteristicUUID)
@@ -66,23 +65,10 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     
     private override init() { super.init() }
     
-    func start() -> Bool {
-        group = dispatch_group_create()
-        dispatch_group_enter(group!)
+    func start() {
         state = .Starting
         peripheralManager = CBPeripheralManager(delegate: nil, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
         peripheralManager.delegate = self
-        
-        let status = dispatch_group_wait(group!, dispatch_time(DISPATCH_TIME_NOW, Int64(timeout * Double(NSEC_PER_SEC))));
-        
-        if (status == 0) {
-            state = .Started
-            return true
-        } else {
-            state = .Stopped
-            stop()
-            return false
-        }
     }
     
     func stop() {
@@ -113,13 +99,10 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
             print(error)
         }
         peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [serviceUUID]])
-        if group != nil {
-            dispatch_group_leave(group!)
-            group = nil
-        }
     }
     
     func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager, error: NSError?) {
+        state = .Started
         print("start advertising")
         if ((error) != nil) {
             print(error!.localizedDescription);
@@ -168,4 +151,5 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
             assertionFailure("Fail to send value update.")
         }
     }
+    
 }

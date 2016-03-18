@@ -24,6 +24,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBAction func availableWhenDeviceLockedSwitchValueChanged(sender: UISwitch) {
         UserDefaults.sharedUserDefaults.availableWhenDeviceLocked = availableWhenDeviceLockedSwitch.on
         resetViewAnimated(true)
+        OTPManager.sharedManager.resaveSecret()
     }
     
     @IBAction func setSecretButtonPressed() {
@@ -102,7 +103,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             informationLabel.text = "Cancelled."
             return true
         }
-        OTPManager.sharedManager.setSecret(secretString)
+        OTPManager.sharedManager.secret = secretString.dataUsingEncoding(NSUTF8StringEncoding)!
         resetViewAnimated(true)
         informationLabel.text = "Secret changed."
         return true

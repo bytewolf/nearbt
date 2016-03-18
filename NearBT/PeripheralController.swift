@@ -64,7 +64,7 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     
     func getNewCharacteristicValue() -> NSData? {
         guard let password = OTPManager.sharedManager.currentPassword else {
-            fatalError("Secret has to be set before accessing password")
+            return nil
         }
         let result = password.dataUsingEncoding(NSUTF8StringEncoding)!
         return result

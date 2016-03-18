@@ -25,41 +25,53 @@ class OTPManager {
         }
     }
     
-    func setSecret(secret: String) {
-        clear()
-        let secAttrAccessible = UserDefaults.sharedUserDefaults.availableWhenDeviceLocked
-                              ? kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-                              : kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-        let query = [
-            kSecClass as String : kSecClassGenericPassword,
-            kSecAttrAccessible as String : secAttrAccessible,
-            kSecAttrAccount as String : keychainAccountName,
-            kSecValueData as String : secret.dataUsingEncoding(NSUTF8StringEncoding)! ]
-        SecItemDelete(query)
-        let status = SecItemAdd(query, nil)
-        if (status == errSecSuccess) {
-            UserDefaults.sharedUserDefaults.hasSetSecret = true
-        } else {
-            fatalError("Fail to save secret in keychain.")
+    var secret: NSData? {
+        get {
+            guard UserDefaults.sharedUserDefaults.hasSetSecret else {
+                return nil
+            }
+            let query = [
+                kSecClass as String : kSecClassGenericPassword,
+                kSecAttrAccount as String : keychainAccountName,
+                kSecReturnData as String : kCFBooleanTrue,
+                kSecMatchLimit as String : kSecMatchLimitOne ]
+            var result: AnyObject?
+            let status = SecItemCopyMatching(query, &result)
+            guard status == errSecSuccess else {
+                return nil
+            }
+            guard let secret = result as? NSData else {
+                fatalError("Fail to read secret from keychain: \(status)")
+            }
+            return secret
+        }
+        
+        set(secret) {
+            clear()
+            guard let secret = secret else {
+                return
+            }
+            let secAttrAccessible = UserDefaults.sharedUserDefaults.availableWhenDeviceLocked
+                                  ? kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+                                  : kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+            let query = [
+                kSecClass as String : kSecClassGenericPassword,
+                kSecAttrAccessible as String : secAttrAccessible,
+                kSecAttrAccount as String : keychainAccountName,
+                kSecValueData as String : secret ]
+            SecItemDelete(query)
+            let status = SecItemAdd(query, nil)
+            if (status == errSecSuccess) {
+                UserDefaults.sharedUserDefaults.hasSetSecret = true
+            } else {
+                fatalError("Fail to save secret in keychain: \(status)")
+            }
         }
     }
     
     var currentPassword: String? {
-        guard UserDefaults.sharedUserDefaults.hasSetSecret else {
+        guard let secret = secret else {
             return nil
-        }
-        let query = [
-            kSecClass as String : kSecClassGenericPassword,
-            kSecAttrAccount as String : keychainAccountName,
-            kSecReturnData as String : kCFBooleanTrue,
-            kSecMatchLimit as String : kSecMatchLimitOne ]
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query, &result)
-        guard status == errSecSuccess else {
-            fatalError("Fail to retrieve secret from keychain")
-        }
-        guard let secret = result as? NSData else {
-            fatalError("Fail to read secret from keychain")
         }
         
         let deviceName = UIDevice.currentDevice().name
@@ -68,5 +80,10 @@ class OTPManager {
         token.updatePassword()
         let password = token.password
         return password
+    }
+    
+    func resaveSecret() {
+        let secret = self.secret
+        self.secret = secret
     }
 }

@@ -11,40 +11,54 @@ import OneTimePassword
 
 class OTPManager {
     
-    static let sharedManager = OTPManager()
+    let keychainAccountName = "name.guoc.NearBT.secret"
     
-    static var cachedToken: OTPToken? = nil
+    static let sharedManager = OTPManager()
+    static var hasSetSecret = false
     
     private init() {}
     
     func setSecret(secret: String) {
-        let deviceName = UIDevice.currentDevice().name
-        let otpToken = OTPToken(type: .Timer, secret: secret.dataUsingEncoding(NSUTF8StringEncoding), name: "NearBT Token", issuer: deviceName)
-        guard otpToken.saveToKeychain() else {
-            fatalError("Fail to save token to keychain")
+        let secAttrAccessible = UserDefaults.sharedUserDefaults.availableWhenDeviceLocked
+                              ? kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+                              : kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        let query = [
+            kSecClass as String : kSecClassGenericPassword,
+            kSecAttrAccessible as String : secAttrAccessible,
+            kSecAttrAccount as String : keychainAccountName,
+            kSecValueData as String : secret.dataUsingEncoding(NSUTF8StringEncoding)! ]
+        SecItemDelete(query)
+        let status = SecItemAdd(query, nil)
+        if (status == errSecSuccess) {
+            OTPManager.hasSetSecret = true
+        } else {
+            fatalError("Fail to save secret in keychain.")
         }
-        UserDefaults.sharedUserDefaults.tokenRef = otpToken.keychainItemRef
     }
     
-    var currentPassword: String! {
-        guard let keychainItemRef = UserDefaults.sharedUserDefaults.tokenRef else {
-            assertionFailure("There is no keychain item ref in user defaults.")
+    var currentPassword: String? {
+        guard OTPManager.hasSetSecret else {
             return nil
         }
-        let tokenInKeychain = OTPToken(keychainItemRef: keychainItemRef)
-        let tokenCacheRequired = UserDefaults.sharedUserDefaults.tokenCacheRequired
-        if tokenCacheRequired && tokenInKeychain != nil {
-            OTPManager.cachedToken = tokenInKeychain
+        let query = [
+            kSecClass as String : kSecClassGenericPassword,
+            kSecAttrAccount as String : keychainAccountName,
+            kSecReturnData as String : kCFBooleanTrue,
+            kSecMatchLimit as String : kSecMatchLimitOne ]
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query, &result)
+        guard status == errSecSuccess else {
+            fatalError("Fail to retrieve secret from keychain")
         }
-        guard let token = tokenCacheRequired ? OTPManager.cachedToken : tokenInKeychain else {
-            if OTPManager.cachedToken == nil { assertionFailure("`OTPManager` has no cached token") }
-            if tokenInKeychain == nil { assertionFailure("There is no token in keychain") }
-            return nil
+        guard let secret = result as? NSData else {
+            fatalError("Fail to read secret from keychain")
         }
+        
+        let deviceName = UIDevice.currentDevice().name
+        let token = OTPToken(type: .Timer, secret: secret, name: "NearBT Token", issuer: deviceName)
+        
         token.updatePassword()
-        let result = token.password
-        token.saveToKeychain()
-        UserDefaults.sharedUserDefaults.tokenRef = token.keychainItemRef
-        return result
+        let password = token.password
+        return password
     }
 }

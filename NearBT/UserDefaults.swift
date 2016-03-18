@@ -12,16 +12,6 @@ class UserDefaults {
     
     private init() {}
     
-    let userDefaultsKeyTokenRef = "keychainRefOfToken"
-    var tokenRef: NSData? {
-        get {
-            return NSUserDefaults.standardUserDefaults().objectForKey(userDefaultsKeyTokenRef) as? NSData
-        }
-        set {
-            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: userDefaultsKeyTokenRef)
-        }
-    }
-    
     let userDefaultsKeyEnabled = "enabled"
     var enabled: Bool {
         get {
@@ -32,13 +22,13 @@ class UserDefaults {
         }
     }
     
-    let userDefaultsKeyTokenCacheRequired = "tokenCacheRequired"
-    var tokenCacheRequired: Bool {
+    let userDefaultsKeyAvailableWhenDeviceLocked = "availableWhenDeviceLocked"
+    var availableWhenDeviceLocked: Bool {
         get {
-            return NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyTokenCacheRequired)
+            return NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyAvailableWhenDeviceLocked)
         }
         set {
-            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: userDefaultsKeyTokenCacheRequired)
+            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: userDefaultsKeyAvailableWhenDeviceLocked)
         }
     }
 }

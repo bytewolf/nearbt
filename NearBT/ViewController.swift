@@ -14,15 +14,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var informationLabel: UILabel!
     @IBOutlet weak var setSecretButton: UIButton!
     @IBOutlet weak var enabledSwitch: UISwitch!
-    @IBOutlet weak var tokenCacheRequiredSwitch: UISwitch!
+    @IBOutlet weak var availableWhenDeviceLockedSwitch: UISwitch!
     @IBOutlet weak var invisibleTextField: UITextField! {
         didSet {
             invisibleTextField.delegate = self
         }
     }
     
-    @IBAction func tokenCacheRequiredSwitchValueChanged(sender: UISwitch) {
-        UserDefaults.sharedUserDefaults.tokenCacheRequired = tokenCacheRequiredSwitch.on
+    @IBAction func availableWhenDeviceLockedSwitchValueChanged(sender: UISwitch) {
+        UserDefaults.sharedUserDefaults.availableWhenDeviceLocked = availableWhenDeviceLockedSwitch.on
         resetViewAnimated(true)
     }
     
@@ -48,11 +48,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         let enabled = UserDefaults.sharedUserDefaults.enabled
         enabledSwitch.setOn(enabled, animated: animated)
         
-        let tokenCacheRequired = UserDefaults.sharedUserDefaults.tokenCacheRequired
-        tokenCacheRequiredSwitch.setOn(tokenCacheRequired, animated: animated)
+        let availableWhenDeviceLocked = UserDefaults.sharedUserDefaults.availableWhenDeviceLocked
+        availableWhenDeviceLockedSwitch.setOn(availableWhenDeviceLocked, animated: animated)
         
-        let tokenRefExisted = (UserDefaults.sharedUserDefaults.tokenRef != nil)
-        enabledSwitch.enabled = tokenRefExisted
+        let hasSetSecret = OTPManager.hasSetSecret
+        enabledSwitch.enabled = hasSetSecret
         
         switch PeripheralController.sharedController.bluetoothState {
         case .Unknown:
@@ -68,7 +68,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
                 informationLabel.text = "- Type secret and end with return.\n"
                     + "- Secret and your typing will not be displayed.\n"
                     + "- Typing enter directly makes no change."
-            } else if tokenRefExisted {
+            } else if hasSetSecret {
                 var text = "Tap switch to turn on/off."
                 if enabled {
                     text += "\nReady."

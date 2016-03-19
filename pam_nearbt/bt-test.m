@@ -13,8 +13,8 @@
 extern int
 check_password(const char*secret, const char*password);
 
-const int testMinimumRSSI = -50;
-const int testAllowedTimeout = 5;
+const int testMinimumRSSI = -80;
+const int testAllowedTimeout = 10;
 const char *testSecretPath = "/usr/local/etc/pam_nearbt/secret";
 
 int main(int argc, const char * argv[]) {

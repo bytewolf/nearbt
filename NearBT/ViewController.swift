@@ -34,6 +34,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBAction func enabledSwitchValueChanged() {
         UserDefaults.sharedUserDefaults.enabled = enabledSwitch.on
         resetViewAnimated(true)
+        if enabledSwitch.on {
+            PeripheralController.sharedController.start()
+        } else {
+            PeripheralController.sharedController.stop()
+        }
     }
     
     override func viewDidLoad() {

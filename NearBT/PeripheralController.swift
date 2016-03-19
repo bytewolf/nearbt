@@ -57,9 +57,10 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     }
     
     func stop() {
-        state = .Stopped
+        peripheralManager.stopAdvertising()
         peripheralManager.delegate = nil
         peripheralManager = nil
+        state = .Stopped
     }
     
     func getNewCharacteristicValue() -> NSData? {

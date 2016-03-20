@@ -16,7 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         let userNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(userNotificationSettings)
-        PeripheralController.sharedController.start()
+        if UserDefaults.sharedUserDefaults.enabled {
+            PeripheralController.sharedController.start()
+        }
         return true
     }
 

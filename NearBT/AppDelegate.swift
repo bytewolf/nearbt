@@ -29,6 +29,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(application: UIApplication) {
+        /* 
+           On iOS 9, this is not a good place to remind user that the application will terminate.
+           This method is called only when: the app is in foreground, users double tap home button,
+           and slide up to kill the app.
+           The method is not called when the app is in background and killed by users.
+        */
+    }
+    
+    func applicationDidReceiveMemoryWarning(application: UIApplication) {
         let notification: UILocalNotification = {
             let notification = UILocalNotification()
             notification.alertTitle = "NearBT will terminate"

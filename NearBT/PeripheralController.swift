@@ -6,6 +6,7 @@
 //  Copyright © 2016 guoc. All rights reserved.
 //
 
+import UIKit
 import CoreBluetooth
 
 protocol PeripheralControllerDelegate {
@@ -65,6 +66,12 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     
     func getNewCharacteristicValue() -> NSData? {
         guard let password = OTPManager.sharedManager.currentPassword else {
+            let notification = UILocalNotification()
+            notification.alertBody = "NearBT couldn't generate password.\n"
+                + (OTPManager.sharedManager.hasSetSecret
+                    ? "Unlock device \nor enable the option: Available When Device Locked."
+                    : "Set secret in NearBT.")
+            UIApplication.sharedApplication().presentLocalNotificationNow(notification)
             return nil
         }
         let result = password.dataUsingEncoding(NSUTF8StringEncoding)!

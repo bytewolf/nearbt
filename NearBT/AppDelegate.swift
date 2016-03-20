@@ -14,6 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        UIApplication.sharedApplication().setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
         let userNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(userNotificationSettings)
         if UserDefaults.sharedUserDefaults.enabled {
@@ -26,6 +27,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let viewController = window?.rootViewController as? ViewController {
             viewController.resetViewAnimated(true)
         }
+    }
+    
+    func application(application: UIApplication, performFetchWithCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+        completionHandler(.NoData)
     }
 
     func applicationWillTerminate(application: UIApplication) {

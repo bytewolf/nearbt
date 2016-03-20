@@ -22,16 +22,6 @@ class UserDefaults {
         }
     }
     
-    let userDefaultsKeyHasSetSecret = "hasSetSecret"
-    var hasSetSecret: Bool {
-        get {
-            return NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyHasSetSecret)
-        }
-        set {
-            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: userDefaultsKeyHasSetSecret)
-        }
-    }
-    
     let userDefaultsKeyAvailableWhenDeviceLocked = "availableWhenDeviceLocked"
     var availableWhenDeviceLocked: Bool {
         get {

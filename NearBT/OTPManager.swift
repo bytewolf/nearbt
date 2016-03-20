@@ -15,6 +15,16 @@ class OTPManager {
     
     static let sharedManager = OTPManager()
     
+    private let userDefaultsKeyHasSetSecret = "hasSetSecret"
+    var hasSetSecret: Bool {
+        get {
+            return NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyHasSetSecret)
+        }
+        set {
+            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: userDefaultsKeyHasSetSecret)
+        }
+    }
+    
     private init() {}
     
     private func clear() {
@@ -27,7 +37,7 @@ class OTPManager {
     
     var secret: NSData? {
         get {
-            guard UserDefaults.sharedUserDefaults.hasSetSecret else {
+            guard hasSetSecret else {
                 return nil
             }
             let query = [
@@ -62,7 +72,7 @@ class OTPManager {
             SecItemDelete(query)
             let status = SecItemAdd(query, nil)
             if (status == errSecSuccess) {
-                UserDefaults.sharedUserDefaults.hasSetSecret = true
+                hasSetSecret = true
             } else {
                 fatalError("Fail to save secret in keychain: \(status)")
             }

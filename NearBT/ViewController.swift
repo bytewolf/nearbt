@@ -57,7 +57,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         let availableWhenDeviceLocked = UserDefaults.sharedUserDefaults.availableWhenDeviceLocked
         availableWhenDeviceLockedSwitch.setOn(availableWhenDeviceLocked, animated: animated)
         
-        let hasSetSecret = UserDefaults.sharedUserDefaults.hasSetSecret
+        let hasSetSecret = OTPManager.sharedManager.hasSetSecret
         if !hasSetSecret {
             enabledSwitch.setOn(false, animated: animated)
         }

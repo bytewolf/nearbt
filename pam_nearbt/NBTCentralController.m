@@ -55,7 +55,9 @@
     
     long status = dispatch_group_wait(self.group, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * self.allowedTimeout));
 
-    [self.centralManager cancelPeripheralConnection:self.targetPeripheral];
+    if (self.targetPeripheral.state != CBPeripheralStateDisconnected) {
+        [self.centralManager cancelPeripheralConnection:self.targetPeripheral];
+    }
     self.centralManager.delegate = nil;
     
     NSLog(@"dispatch_group_wait return status: %ld", status);

@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <security/pam_appl.h>
 #include "oath.h"
+#include <pwd.h>
 
 #import <IOBluetooth/objc/IOBluetoothDevice.h>
 #import <IOBluetooth/IOBluetoothUtilities.h>
@@ -10,6 +11,8 @@
 
 #define DEFAULT_MINIMUM_RSSI (-50)
 #define DEFAULT_TIMEOUT (5)
+#define DEFAULT_USER_SECRET_PATH "~/.config/pam_nearbt/secret"
+#define DEFAULT_GLOBAL_SECRET_PATH "/usr/local/etc/pam_nearbt/secret"
 
 struct cfg
 {
@@ -69,6 +72,55 @@ parse_cfg (int flags, int argc, const char *argv[], struct cfg *cfg)
     }
 }
 
+static const char *
+get_home_dir(pam_handle_t *pamh)
+{
+    const char *username = NULL;
+    const char *homedir = NULL;
+    pam_get_user(pamh, &username, NULL);
+    if (username) {
+        struct passwd *p = getpwnam(username);
+        homedir = p->pw_dir;
+    }
+    return homedir;
+}
+
+extern const char *
+get_valid_secret_path(const char *path, const char *homedir)
+{
+    NSString *secretPath = [NSString stringWithUTF8String:path];
+    
+    if ([secretPath hasPrefix:@"~"]) {
+        if (!homedir) {
+            NSLog(@"Fail to get current user directory, %s is tried to be applied.", DEFAULT_GLOBAL_SECRET_PATH);
+            return DEFAULT_GLOBAL_SECRET_PATH;
+        }
+        NSString *homeDirectory = [NSString stringWithUTF8String:homedir];
+        secretPath = [homeDirectory stringByAppendingString:[secretPath substringFromIndex:1]];
+    }
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
+        return secretPath.UTF8String;
+    } else {
+        NSLog(@"%@ not found, %s is tried to be applied.", secretPath, DEFAULT_USER_SECRET_PATH);
+        secretPath = @DEFAULT_USER_SECRET_PATH;
+    }
+    
+    if (!homedir) {
+        NSLog(@"Fail to get current user directory, %s is tried to be applied.", DEFAULT_GLOBAL_SECRET_PATH);
+        return DEFAULT_GLOBAL_SECRET_PATH;
+    }
+    NSString *homeDirectory = [NSString stringWithUTF8String:homedir];
+    secretPath = [homeDirectory stringByAppendingString:[secretPath substringFromIndex:1]];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
+        return secretPath.UTF8String;
+    } else {
+        NSLog(@"%@ not found, %s is tried to be applied.", secretPath, DEFAULT_GLOBAL_SECRET_PATH);
+        return DEFAULT_GLOBAL_SECRET_PATH;
+    }
+}
+
 static void
 run(const char *file_path)
 {
@@ -105,13 +157,22 @@ int
 pam_sm_authenticate(pam_handle_t *pamh, int flags,
     int argc, const char *argv[])
 {
-    struct cfg cfg_st;
-    struct cfg *cfg = &cfg_st;
-    parse_cfg (flags, argc, argv, cfg);
-
-    run(cfg->run_always);
-
     @autoreleasepool {
+        
+        struct cfg cfg_st;
+        struct cfg *cfg = &cfg_st;
+        parse_cfg (flags, argc, argv, cfg);
+        
+        run(cfg->run_always);
+        
+        const char *homedir = get_home_dir(pamh);
+        const char *secret_path = get_valid_secret_path(cfg->secret_path, homedir);
+        
+        NSString *secretPath = [NSString stringWithCString:secret_path encoding:NSUTF8StringEncoding];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
+            NSLog(@"Secret file %@ not exist", secretPath);
+            return (PAM_AUTH_ERR);
+        }
         
         NBTCentralController *controller = [[NBTCentralController alloc] initWithMinimumRSSI:[NSNumber numberWithInt:cfg->min_rssi] timeout:cfg->timeout];
         
@@ -123,8 +184,11 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         }
         NSLog(@"Read value: %@", value);
         
-        NSString *secretPath = [NSString stringWithCString:cfg->secret_path encoding:NSUTF8StringEncoding];
         const char *secret = [[[NSString stringWithContentsOfFile:secretPath encoding:NSUTF8StringEncoding error:nil] stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] UTF8String];
+        if (!secret) {
+            NSLog(@"Fail to read secret file.");
+            return (PAM_AUTH_ERR);
+        }
         if (secret == nil) {
             NSLog(@"Fail to read secret file %@", secretPath);
             run(cfg->run_if_fail);

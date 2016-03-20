@@ -19,6 +19,8 @@
 		BD45E5091C97889B0055FB3F /* pam_nearbt.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5051C97889B0055FB3F /* pam_nearbt.m */; };
 		BD45E50E1C9789050055FB3F /* Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = BD45E50C1C9789050055FB3F /* Constants.h */; };
 		BD45E50F1C9789050055FB3F /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E50D1C9789050055FB3F /* Constants.m */; };
+		BD487CDE1C9D8AC6007091F4 /* libpam.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD487CDD1C9D8AC6007091F4 /* libpam.dylib */; };
+		BD487CDF1C9D8AC6007091F4 /* libpam.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD487CDD1C9D8AC6007091F4 /* libpam.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +46,7 @@
 		BD45E5051C97889B0055FB3F /* pam_nearbt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = pam_nearbt.m; path = pam_nearbt/pam_nearbt.m; sourceTree = "<group>"; };
 		BD45E50C1C9789050055FB3F /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		BD45E50D1C9789050055FB3F /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		BD487CDD1C9D8AC6007091F4 /* libpam.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpam.dylib; path = ../../../../usr/lib/libpam.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +55,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD0F25E91C9A95D3003357F9 /* liboath.dylib in Frameworks */,
+				BD487CDF1C9D8AC6007091F4 /* libpam.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD0F25E81C9A95CA003357F9 /* liboath.dylib in Frameworks */,
+				BD487CDE1C9D8AC6007091F4 /* libpam.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +99,7 @@
 				BD0F25E71C9A95CA003357F9 /* liboath.dylib */,
 				BD45E5001C97888E0055FB3F /* bt-test.m */,
 				BD45E5051C97889B0055FB3F /* pam_nearbt.m */,
+				BD487CDD1C9D8AC6007091F4 /* libpam.dylib */,
 			);
 			name = pam_nearbt;
 			sourceTree = "<group>";

@@ -25,86 +25,85 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mMS-4r-AxX">
-                                <rect key="frame" x="20" y="28" width="560" height="101.5"/>
-                                <string key="text">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="HHa-TP-XDr">
+                                <rect key="frame" x="20" y="28" width="560" height="564"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="CVh-AJ-KhR">
+                                        <rect key="frame" x="0.0" y="0.0" width="560" height="101.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="560" placeholderIntrinsicHeight="101.5" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mMS-4r-AxX">
+                                                <rect key="frame" x="0.0" y="0.0" width="560" height="101.5"/>
+                                                <string key="text">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
 At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est </string>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="21a-VI-NUA">
-                                <rect key="frame" x="20" y="472" width="70" height="30"/>
-                                <state key="normal" title="Set secret"/>
-                                <connections>
-                                    <action selector="setSecretButtonPressed" destination="BYZ-38-t0r" eventType="touchUpInside" id="hAX-pb-Mtu"/>
-                                </connections>
-                            </button>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="6q5-P7-wfv">
-                                <rect key="frame" x="20" y="549" width="560" height="31"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CyY-Qd-zVe">
-                                        <rect key="frame" x="0.0" y="0.0" width="62" height="31"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1qK-Fa-msY">
-                                        <rect key="frame" x="511" y="0.0" width="51" height="31"/>
-                                        <connections>
-                                            <action selector="enabledSwitchValueChanged" destination="BYZ-38-t0r" eventType="valueChanged" id="Gma-as-ooh"/>
-                                        </connections>
-                                    </switch>
-                                </subviews>
-                            </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="6m8-CF-QfC">
-                                <rect key="frame" x="20" y="510" width="560" height="31"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Available when device locked" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JHQ-Wx-xMq">
-                                        <rect key="frame" x="0.0" y="5.5" width="223" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="AHd-2o-PjI">
-                                        <rect key="frame" x="511" y="0.0" width="51" height="31"/>
-                                        <connections>
-                                            <action selector="availableWhenDeviceLockedSwitchValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="04I-fa-cyx"/>
-                                        </connections>
-                                    </switch>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="eXc-D1-G83">
+                                        <rect key="frame" x="0.0" y="431.5" width="560" height="132.5"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="cua-fZ-cWf">
+                                                <rect key="frame" x="0.0" y="0.0" width="560" height="30"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="21a-VI-NUA">
+                                                        <rect key="frame" x="0.0" y="0.0" width="70" height="30"/>
+                                                        <state key="normal" title="Set secret"/>
+                                                        <connections>
+                                                            <action selector="setSecretButtonPressed" destination="BYZ-38-t0r" eventType="touchUpInside" id="hAX-pb-Mtu"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="6m8-CF-QfC">
+                                                <rect key="frame" x="0.0" y="50.5" width="560" height="31"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Available when device locked" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JHQ-Wx-xMq">
+                                                        <rect key="frame" x="0.0" y="5.5" width="223" height="20.5"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="AHd-2o-PjI">
+                                                        <rect key="frame" x="511" y="0.0" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="availableWhenDeviceLockedSwitchValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="04I-fa-cyx"/>
+                                                        </connections>
+                                                    </switch>
+                                                </subviews>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="6q5-P7-wfv">
+                                                <rect key="frame" x="0.0" y="101.5" width="560" height="31"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CyY-Qd-zVe">
+                                                        <rect key="frame" x="0.0" y="0.0" width="62" height="31"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1qK-Fa-msY">
+                                                        <rect key="frame" x="511" y="0.0" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="enabledSwitchValueChanged" destination="BYZ-38-t0r" eventType="valueChanged" id="Gma-as-ooh"/>
+                                                        </connections>
+                                                    </switch>
+                                                </subviews>
+                                            </stackView>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="6m8-CF-QfC" firstAttribute="top" secondItem="21a-VI-NUA" secondAttribute="bottom" constant="8" symbolic="YES" id="1Rv-h0-sHu"/>
-                            <constraint firstItem="21a-VI-NUA" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="Bq7-1L-Vnp"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="6q5-P7-wfv" secondAttribute="bottom" constant="20" id="CmM-cf-PfR"/>
-                            <constraint firstItem="mMS-4r-AxX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Eb3-lc-DQL"/>
-                            <constraint firstItem="21a-VI-NUA" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="G6R-EC-dL4"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="mMS-4r-AxX" secondAttribute="trailing" id="JKh-uG-SgO"/>
-                            <constraint firstItem="mMS-4r-AxX" firstAttribute="top" secondItem="21a-VI-NUA" secondAttribute="bottom" constant="8" id="MKZ-ao-zsq"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="6q5-P7-wfv" secondAttribute="trailing" id="Nxp-3K-caw"/>
-                            <constraint firstItem="mMS-4r-AxX" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="O5y-Hf-Ejb"/>
-                            <constraint firstAttribute="leadingMargin" secondItem="6m8-CF-QfC" secondAttribute="leading" id="Wp5-sG-Foz"/>
-                            <constraint firstItem="6q5-P7-wfv" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="jYr-dV-Ain"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="HHa-TP-XDr" secondAttribute="leading" id="7oH-WH-Poi"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="HHa-TP-XDr" secondAttribute="trailing" id="EGy-6x-i2z"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="HHa-TP-XDr" secondAttribute="bottom" constant="8" symbolic="YES" id="Efv-No-zRP"/>
+                            <constraint firstItem="HHa-TP-XDr" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="ayH-Yi-5nJ"/>
                             <constraint firstItem="wf9-ln-89S" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="lIN-t9-RXn"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="6m8-CF-QfC" secondAttribute="trailing" id="pVv-ur-gPi"/>
-                            <constraint firstItem="21a-VI-NUA" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="pxc-PJ-jFZ"/>
-                            <constraint firstItem="mMS-4r-AxX" firstAttribute="centerX" secondItem="21a-VI-NUA" secondAttribute="centerX" id="roI-7d-urJ"/>
                             <constraint firstItem="wf9-ln-89S" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="uah-2j-eah"/>
-                            <constraint firstItem="mMS-4r-AxX" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="w6e-ES-wC1"/>
-                            <constraint firstItem="6q5-P7-wfv" firstAttribute="top" secondItem="6m8-CF-QfC" secondAttribute="bottom" constant="8" symbolic="YES" id="wvT-5a-Lza"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="Eb3-lc-DQL"/>
-                                <exclude reference="MKZ-ao-zsq"/>
-                                <exclude reference="roI-7d-urJ"/>
-                                <exclude reference="Bq7-1L-Vnp"/>
-                                <exclude reference="pxc-PJ-jFZ"/>
-                            </mask>
-                        </variation>
                     </view>
                     <connections>
                         <outlet property="availableWhenDeviceLockedSwitch" destination="AHd-2o-PjI" id="CCu-b2-Rcp"/>

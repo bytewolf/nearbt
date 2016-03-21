@@ -80,7 +80,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             if invisibleTextField.editing {
                 informationLabel.text = "- Type secret and end with return.\n"
                     + "- Secret and your typing will not be displayed.\n"
-                    + "- Typing enter directly makes no change."
+                    + "- Typing return directly makes no change."
             } else if hasSetSecret {
                 var text = "Tap switch to turn on/off."
                 if enabled {

@@ -51,6 +51,10 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     func resetViewAnimated(animated: Bool) {
+        guard isViewLoaded() else {
+            return
+        }
+        
         let enabled = UserDefaults.sharedUserDefaults.enabled
         enabledSwitch.setOn(enabled, animated: animated)
         

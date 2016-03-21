@@ -69,7 +69,7 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
             let notification = UILocalNotification()
             notification.alertBody = "NearBT couldn't generate password.\n"
                 + (OTPManager.sharedManager.hasSetSecret
-                    ? "Unlock device \nor enable the option: Available When Device Locked."
+                    ? "Unlock device \nor enable the option: available when device locked."
                     : "Set secret in NearBT.")
             UIApplication.sharedApplication().presentLocalNotificationNow(notification)
             return nil

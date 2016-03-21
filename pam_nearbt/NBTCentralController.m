@@ -22,8 +22,8 @@
 @property (nonatomic) CBCentralManager *centralManager;
 @property (nonatomic) NSData *valueData;
 @property (nonatomic) dispatch_group_t group;
-@property (nonatomic) CBUUID * serviceUUID;
-@property (nonatomic) CBUUID * characteristicUUID;
+@property (nonatomic) CBUUID * targetServiceUUID;
+@property (nonatomic) CBUUID * targetCharacteristicUUID;
 @end
 
 @implementation NBTCentralController
@@ -45,8 +45,8 @@
 
 - (NSData *)readValueForCharacteristicUUID:(CBUUID *)characteristicUUID ofServiceUUID:(CBUUID *)serviceUUID {
     NSLog(@"{{{ Trying reading value …");
-    self.characteristicUUID = characteristicUUID;
-    self.serviceUUID = serviceUUID;
+    self.targetCharacteristicUUID = characteristicUUID;
+    self.targetServiceUUID = serviceUUID;
     
     self.group = dispatch_group_create();
     dispatch_group_enter(self.group);
@@ -55,10 +55,9 @@
     
     long status = dispatch_group_wait(self.group, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * self.allowedTimeout));
 
-    if (self.targetPeripheral.state != CBPeripheralStateDisconnected) {
-        [self.centralManager cancelPeripheralConnection:self.targetPeripheral];
-    }
-    self.centralManager.delegate = nil;
+    NSData *result = self.valueData;
+    
+    [self cleanup];
     
     NSLog(@"dispatch_group_wait return status: %ld", status);
     
@@ -67,7 +66,7 @@
         return nil;
     }
     NSLog(@"}}} End of reading value.");
-    return self.valueData;
+    return result;
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
@@ -113,7 +112,12 @@
     }
     peripheral.delegate = self;
     NSLog(@"}}} Try discover the peripheral's services …");
-    [peripheral discoverServices:@[self.serviceUUID]];
+    [peripheral discoverServices:@[self.targetServiceUUID]];
+}
+
+- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
+    NSLog(@"Fail to connect to %@: %@", peripheral, [error localizedDescription]);
+    [self cleanup];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
@@ -123,12 +127,12 @@
         return;
     }
     if (error) {
-        NSLog(@"}}} Error: %@", error);
+        NSLog(@"}}} Error discovering services: %@", [error localizedDescription]);
         return;
     }
     CBService *targetService = nil;
     for (CBService *service in peripheral.services) {
-        if ([service.UUID isEqual:self.serviceUUID]) {
+        if ([service.UUID isEqual:self.targetServiceUUID]) {
             targetService = service;
             [self.centralManager stopScan];
             break;
@@ -139,7 +143,7 @@
         NSLog(@"Current peripheral is stored.\n");
         NSLog(@"}}} Further peripherals discovering, connecting and services discovering will be stopped.");
         self.targetPeripheral = peripheral;
-        [peripheral discoverCharacteristics:@[self.characteristicUUID] forService:targetService];
+        [peripheral discoverCharacteristics:@[self.targetCharacteristicUUID] forService:targetService];
     } else {
         NSLog(@"}}} Target service is not found.");
         [self.discoveredPeripheral removeObject:peripheral];
@@ -150,12 +154,13 @@
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
     NSLog(@"{{{ Central manager did discover characteristics %@", service.characteristics);
     if (error) {
-        NSLog(@"}}} Error: %@", error);
+        NSLog(@"}}} Error discovering characteristics: %@", [error localizedDescription]);
+        [self cleanup];
         return;
     }
     CBCharacteristic *targetCharacteristic = nil;
     for (CBCharacteristic *characteristic in service.characteristics) {
-        if ([characteristic.UUID isEqual:self.characteristicUUID]) {
+        if ([characteristic.UUID isEqual:self.targetCharacteristicUUID]) {
             targetCharacteristic = characteristic;
             break;
         }
@@ -170,7 +175,8 @@
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     NSLog(@"{{{ Peripheral did update value.");
     if (error) {
-        NSLog(@"}}} Error: %@", error);
+        NSLog(@"}}} Error discovering characteristics: %@", [error localizedDescription]);
+        [self cleanup];
         return;
     }
     self.valueData = characteristic.value;
@@ -180,6 +186,46 @@
         self.group = nil;
     }
     return;
+}
+
+- (void)cleanup {
+    self.valueData = nil;
+    
+    if (self.targetPeripheral != nil && self.targetPeripheral.services != nil) {
+        for (CBService *service in self.targetPeripheral.services) {
+            if ([service.UUID isEqual:self.targetServiceUUID]) {
+                if (service.characteristics != nil) {
+                    for (CBCharacteristic *characteristic in service.characteristics) {
+                        if ([characteristic.UUID isEqual:self.targetCharacteristicUUID]) {
+                            if (characteristic.isNotifying) {
+                                [self.targetPeripheral setNotifyValue:NO forCharacteristic:characteristic];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    if (self.targetPeripheral && self.targetPeripheral.state != CBPeripheralStateDisconnected) {
+        [self.centralManager cancelPeripheralConnection:self.targetPeripheral];
+    }
+    
+    if (self.group) {
+        dispatch_group_leave(self.group);
+        self.group = nil;
+    }
+    
+    self.centralManager.delegate = nil;
+    self.centralManager = nil;
+    
+    [self.discoveredPeripheral removeAllObjects];
+    self.discoveredPeripheral = nil;
+    
+    [self.discardedPeripheral removeAllObjects];
+    self.discardedPeripheral = nil;
+    
+    self.targetPeripheral = nil;
 }
 
 @end

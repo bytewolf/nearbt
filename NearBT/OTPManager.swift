@@ -29,10 +29,7 @@ class OTPManager {
     
     private func clear() {
         let query = [kSecClass as String : kSecClassGenericPassword]
-        let status = SecItemDelete(query)
-        guard status == noErr else {
-            fatalError("Fail to clear keychain.")
-        }
+        SecItemDelete(query)
     }
     
     var secret: NSData? {

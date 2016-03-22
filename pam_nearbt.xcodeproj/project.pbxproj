@@ -21,10 +21,21 @@
 		BD45E50F1C9789050055FB3F /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E50D1C9789050055FB3F /* Constants.m */; };
 		BD487CDE1C9D8AC6007091F4 /* libpam.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD487CDD1C9D8AC6007091F4 /* libpam.dylib */; };
 		BD487CDF1C9D8AC6007091F4 /* libpam.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD487CDD1C9D8AC6007091F4 /* libpam.dylib */; };
+		BD5019641CA2071A00C6E6A8 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5019631CA2071A00C6E6A8 /* main.swift */; };
+		BD50196B1CA20C0100C6E6A8 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E50D1C9789050055FB3F /* Constants.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		BD1306781C978D20008BA36B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		BD50195F1CA2071A00C6E6A8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -48,6 +59,9 @@
 		BD45E50C1C9789050055FB3F /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		BD45E50D1C9789050055FB3F /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		BD487CDD1C9D8AC6007091F4 /* libpam.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpam.dylib; path = ../../../../usr/lib/libpam.dylib; sourceTree = "<group>"; };
+		BD5019611CA2071A00C6E6A8 /* pam_nearbt-setup */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "pam_nearbt-setup"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD5019631CA2071A00C6E6A8 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		BD5019681CA2080100C6E6A8 /* pam_nearbt-setup-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pam_nearbt-setup-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +83,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BD50195E1CA2071A00C6E6A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,6 +99,7 @@
 				BD45E50C1C9789050055FB3F /* Constants.h */,
 				BD45E50D1C9789050055FB3F /* Constants.m */,
 				BD45E4FF1C97887D0055FB3F /* pam_nearbt */,
+				BD5019621CA2071A00C6E6A8 /* pam_nearbt-setup */,
 				BD45E4F91C97882A0055FB3F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -87,6 +109,7 @@
 			children = (
 				BD45E4F81C97882A0055FB3F /* pam_nearbt.so */,
 				BD13067A1C978D20008BA36B /* bt-test */,
+				BD5019611CA2071A00C6E6A8 /* pam_nearbt-setup */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -104,6 +127,15 @@
 				BD00BEEF1CA115B800CB5194 /* install-pam_nearbt.sh */,
 			);
 			name = pam_nearbt;
+			sourceTree = "<group>";
+		};
+		BD5019621CA2071A00C6E6A8 /* pam_nearbt-setup */ = {
+			isa = PBXGroup;
+			children = (
+				BD5019631CA2071A00C6E6A8 /* main.swift */,
+				BD5019681CA2080100C6E6A8 /* pam_nearbt-setup-Bridging-Header.h */,
+			);
+			path = "pam_nearbt-setup";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,12 +188,30 @@
 			productReference = BD45E4F81C97882A0055FB3F /* pam_nearbt.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		BD5019601CA2071A00C6E6A8 /* pam_nearbt-setup */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD5019671CA2071A00C6E6A8 /* Build configuration list for PBXNativeTarget "pam_nearbt-setup" */;
+			buildPhases = (
+				BD50195D1CA2071A00C6E6A8 /* Sources */,
+				BD50195E1CA2071A00C6E6A8 /* Frameworks */,
+				BD50195F1CA2071A00C6E6A8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "pam_nearbt-setup";
+			productName = "pam_nearbt-setup";
+			productReference = BD5019611CA2071A00C6E6A8 /* pam_nearbt-setup */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		BD45E4F01C97882A0055FB3F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = guoc;
 				TargetAttributes = {
@@ -170,6 +220,9 @@
 					};
 					BD45E4F71C97882A0055FB3F = {
 						CreatedOnToolsVersion = 7.2.1;
+					};
+					BD5019601CA2071A00C6E6A8 = {
+						CreatedOnToolsVersion = 7.3;
 					};
 				};
 			};
@@ -187,6 +240,7 @@
 			targets = (
 				BD45E4F71C97882A0055FB3F /* pam_nearbt */,
 				BD1306791C978D20008BA36B /* bt-test */,
+				BD5019601CA2071A00C6E6A8 /* pam_nearbt-setup */,
 			);
 		};
 /* End PBXProject section */
@@ -210,6 +264,15 @@
 				BD45E5091C97889B0055FB3F /* pam_nearbt.m in Sources */,
 				BD45E5071C97889B0055FB3F /* NBTCentralController.m in Sources */,
 				BD45E50F1C9789050055FB3F /* Constants.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD50195D1CA2071A00C6E6A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD5019641CA2071A00C6E6A8 /* main.swift in Sources */,
+				BD50196B1CA20C0100C6E6A8 /* Constants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,6 +418,29 @@
 			};
 			name = Release;
 		};
+		BD5019651CA2071A00C6E6A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "pam_nearbt-setup/pam_nearbt-setup-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		BD5019661CA2071A00C6E6A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "pam_nearbt-setup/pam_nearbt-setup-Bridging-Header.h";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -384,6 +470,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		BD5019671CA2071A00C6E6A8 /* Build configuration list for PBXNativeTarget "pam_nearbt-setup" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD5019651CA2071A00C6E6A8 /* Debug */,
+				BD5019661CA2071A00C6E6A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

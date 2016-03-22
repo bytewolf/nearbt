@@ -159,6 +159,8 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
 {
     @autoreleasepool {
         
+        NSLog(@"------ Start of pam_nearbt ------");
+        
         struct cfg cfg_st;
         struct cfg *cfg = &cfg_st;
         parse_cfg (flags, argc, argv, cfg);
@@ -172,6 +174,7 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         if (![[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
             NSLog(@"Secret file %@ not exist", secretPath);
             run(cfg->run_if_fail);
+            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
         
@@ -181,6 +184,7 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         if (value == nil) {
             NSLog(@"Fail to read value from peripheral");
             run(cfg->run_if_fail);
+            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
         NSLog(@"Read value: %@", value);
@@ -189,11 +193,13 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         if (!secret) {
             NSLog(@"Fail to read secret file.");
             run(cfg->run_if_fail);
+            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
         if (secret == nil) {
             NSLog(@"Fail to read secret file %@", secretPath);
             run(cfg->run_if_fail);
+            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
         
@@ -203,9 +209,11 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         
         if (passwordMatched == 0) {
             run(cfg->run_if_success);
+            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_SUCCESS));
             return (PAM_SUCCESS);
         } else {
             run(cfg->run_if_fail);
+            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
     }

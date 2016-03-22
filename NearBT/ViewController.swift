@@ -43,7 +43,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleBluetoothStateChanged:", name: notificationKeyBluetoothStateChanged, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(handleBluetoothStateChanged(_:)), name: notificationKeyBluetoothStateChanged, object: nil)
     }
     
     func handleBluetoothStateChanged(notification: NSNotification) {

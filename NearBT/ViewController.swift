@@ -55,17 +55,14 @@ class ViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
+        let hasSetSecret = OTPManager.sharedManager.hasSetSecret
         let enabled = UserDefaults.sharedUserDefaults.enabled
         enabledSwitch.setOn(enabled, animated: animated)
+        enabledSwitch.enabled = hasSetSecret
         
         let availableWhenDeviceLocked = UserDefaults.sharedUserDefaults.availableWhenDeviceLocked
         availableWhenDeviceLockedSwitch.setOn(availableWhenDeviceLocked, animated: animated)
-        
-        let hasSetSecret = OTPManager.sharedManager.hasSetSecret
-        if !hasSetSecret {
-            enabledSwitch.setOn(false, animated: animated)
-        }
-        enabledSwitch.enabled = hasSetSecret
+        availableWhenDeviceLockedSwitch.enabled = enabled
         
         switch PeripheralController.sharedController.bluetoothState {
         case .Unknown:

@@ -175,7 +175,7 @@
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     NSLog(@"{{{ Peripheral did update value.");
     if (error) {
-        NSLog(@"}}} Error discovering characteristics: %@", [error localizedDescription]);
+        NSLog(@"}}} Error did update value: %@", [error localizedDescription]);
         [self cleanup];
         return;
     }

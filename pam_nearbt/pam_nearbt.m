@@ -171,6 +171,7 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         NSString *secretPath = [NSString stringWithCString:secret_path encoding:NSUTF8StringEncoding];
         if (![[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
             NSLog(@"Secret file %@ not exist", secretPath);
+            run(cfg->run_if_fail);
             return (PAM_AUTH_ERR);
         }
         
@@ -187,6 +188,7 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         const char *secret = [[[NSString stringWithContentsOfFile:secretPath encoding:NSUTF8StringEncoding error:nil] stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] UTF8String];
         if (!secret) {
             NSLog(@"Fail to read secret file.");
+            run(cfg->run_if_fail);
             return (PAM_AUTH_ERR);
         }
         if (secret == nil) {

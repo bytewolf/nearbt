@@ -26,8 +26,16 @@ int main(int argc, const char * argv[]) {
     
     @autoreleasepool {
         
+        NSString *peripheralConfigurationFilePath = kPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
+        if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
+            NSLog(@"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);
+            return -1;
+        }
+        NSString *uuidString = [NSString stringWithContentsOfFile:peripheralConfigurationFilePath encoding:NSUTF8StringEncoding error:nil];
+        NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:uuidString];
+
         NBTCentralController *controller = [[NBTCentralController alloc] initWithMinimumRSSI:[NSNumber numberWithInt:(testMinimumRSSI)] timeout:testAllowedTimeout];
-        NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID]];
+        NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID] ofPeripheralUUID:uuid];
         const char *secret_path = get_valid_secret_path(testSecretPath, "/Users/guoc");
         NSString *secretPath = [NSString stringWithCString:secret_path encoding:NSUTF8StringEncoding];
         if (![[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {

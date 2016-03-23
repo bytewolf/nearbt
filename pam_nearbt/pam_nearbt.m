@@ -178,9 +178,19 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
             return (PAM_AUTH_ERR);
         }
         
+        NSString *peripheralConfigurationFilePath = kPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
+        if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
+            NSLog(@"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);
+            run(cfg->run_if_fail);
+            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
+            return (PAM_AUTH_ERR);
+        }
+        NSString *uuidString = [NSString stringWithContentsOfFile:peripheralConfigurationFilePath encoding:NSUTF8StringEncoding error:nil];
+        NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:uuidString];
+        
         NBTCentralController *controller = [[NBTCentralController alloc] initWithMinimumRSSI:[NSNumber numberWithInt:cfg->min_rssi] timeout:cfg->timeout];
         
-        NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID]];
+        NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID] ofPeripheralUUID:uuid];
         if (value == nil) {
             NSLog(@"Fail to read value from peripheral");
             run(cfg->run_if_fail);

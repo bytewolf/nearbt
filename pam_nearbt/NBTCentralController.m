@@ -20,6 +20,7 @@
 @property (nonatomic) CBCentralManager *centralManager;
 @property (nonatomic) NSData *valueData;
 @property (nonatomic) dispatch_group_t group;
+@property (nonatomic) NSUUID * targetPeripheralUUID;
 @property (nonatomic) CBUUID * targetServiceUUID;
 @property (nonatomic) CBUUID * targetCharacteristicUUID;
 @end
@@ -39,10 +40,11 @@
     return self;
 }
 
-- (NSData *)readValueForCharacteristicUUID:(CBUUID *)characteristicUUID ofServiceUUID:(CBUUID *)serviceUUID {
+- (NSData *)readValueForCharacteristicUUID:(CBUUID *)characteristicUUID ofServiceUUID:(CBUUID *)serviceUUID ofPeripheralUUID:(NSUUID *)peripheralUUID {
     NSLog(@"{{{ Trying reading value …");
     self.targetCharacteristicUUID = characteristicUUID;
     self.targetServiceUUID = serviceUUID;
+    self.targetPeripheralUUID = peripheralUUID;
     
     self.group = dispatch_group_create();
     dispatch_group_enter(self.group);
@@ -74,14 +76,7 @@
     if (central.state != CBCentralManagerStatePoweredOn) {
         return;
     }
-    NSString *peripheralConfigurationFilePath = kPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
-    if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
-        [self cleanup];
-        return;
-    }
-    NSString *uuidString = [NSString stringWithContentsOfFile:peripheralConfigurationFilePath encoding:NSUTF8StringEncoding error:nil];
-    NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:uuidString];
-    self.targetPeripheral = [central retrievePeripheralsWithIdentifiers:@[uuid]].lastObject;
+    self.targetPeripheral = [central retrievePeripheralsWithIdentifiers:@[self.targetPeripheralUUID]].lastObject;
     if (self.targetPeripheral) {
         [central connectPeripheral:self.targetPeripheral options:nil];
     } else {

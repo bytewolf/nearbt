@@ -67,6 +67,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
         switch PeripheralController.sharedController.bluetoothState {
         case .Unknown:
             informationLabel.text = "Waiting bluetooth …"
+            if OTPManager.sharedManager.hasSetSecret == false {
+                informationLabel.text = "Set secret first."
+            }
         case .Unsupported:
             informationLabel.text = "Bluetooth low energy is not supported."
         case .PowerOff:
@@ -81,7 +84,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             } else if hasSetSecret {
                 var text = "Tap switch to turn on/off."
                 if enabled {
-                    text += "\nReady."
+                    text = "Ready."
                 }
                 informationLabel.text = text
             } else {

@@ -77,11 +77,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         case .PairingRequired:
             informationLabel.text = "Pairing required."
         case .Ready:
-            if invisibleTextField.editing {
-                informationLabel.text = "- Type secret and end with return.\n"
-                    + "- Secret and your typing will not be displayed.\n"
-                    + "- Typing return directly makes no change."
-            } else if hasSetSecret {
+            if hasSetSecret {
                 var text = "Tap switch to turn on/off."
                 if enabled {
                     text = "Ready."
@@ -90,6 +86,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
             } else {
                 informationLabel.text = "Set secret before turning on."
             }
+        }
+        
+        if invisibleTextField.editing {
+            informationLabel.text = "- Type secret and end with return.\n"
+                + "- Secret and your typing will not be displayed.\n"
+                + "- Typing return directly makes no change."
         }
         
         invisibleTextField.text = nil

@@ -22,11 +22,21 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate {
     
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         let peripheralConfigurationFilePath = NSString(string:kPeripheralConfigurationFilePath).stringByExpandingTildeInPath
+        if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
+            print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n)")
+            if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
+                print("Canceled.")
+                CFRunLoopStop(CFRunLoopGetMain())
+                return
+            }
+        }
         NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: peripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+        print("Setup finished.")
         CFRunLoopStop(CFRunLoopGetMain())
     }
 }
 
+print("Launch NearBT on your device, set secret if necessary and turn on \"Enabled\"")
 let delegate = CentralDelegate()
 let centralManager = CBCentralManager(delegate: delegate, queue: nil)
 

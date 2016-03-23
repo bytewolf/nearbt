@@ -9,7 +9,9 @@
 import Foundation
 import CoreBluetooth
 
-class CentralDelegate: NSObject, CBCentralManagerDelegate {
+class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+    
+    var targetPeripheral: CBPeripheral?
     
     let serviceUUID = CBUUID(string: kServiceUUID)
     let characteristicUUID = CBUUID(string: kCharacteristicUUID)
@@ -21,24 +23,59 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate {
     }
     
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
-        let peripheralConfigurationFilePath = NSString(string:kPeripheralConfigurationFilePath).stringByExpandingTildeInPath
-        if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
-            print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n)")
-            if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
-                print("Canceled.")
-                CFRunLoopStop(CFRunLoopGetMain())
-                return
-            }
+        peripheral.delegate = self
+        targetPeripheral = peripheral
+        central.connectPeripheral(peripheral, options: nil)
+    }
+    
+    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+        peripheral.discoverServices([serviceUUID])
+    }
+    
+    func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+        print("Fail to connect peripheral: \(error?.localizedDescription)")
+    }
+    
+    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+        guard let service = peripheral.services?.last where service.UUID == serviceUUID else {
+            print("Target service is not found.")
+            return
         }
+        peripheral.discoverCharacteristics([characteristicUUID], forService:service)
+    }
+    
+    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+        guard let characteristic = service.characteristics?.last where characteristic.UUID == characteristicUUID else {
+            print("Target characteristic is not found.")
+            return
+        }
+        peripheral.readValueForCharacteristic(characteristic)
+    }
+    
+    func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+        if let error = error {
+            print("Setup failure: \(error.localizedDescription)")
+            CFRunLoopStop(CFRunLoopGetMain())
+        }
+        
         NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: peripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
         print("Setup finished.")
         CFRunLoopStop(CFRunLoopGetMain())
     }
+    
 }
 
+let peripheralConfigurationFilePath = NSString(string:kPeripheralConfigurationFilePath).stringByExpandingTildeInPath
+if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
+    print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n) ", terminator:"")
+    if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
+        print("Canceled.")
+        CFRunLoopStop(CFRunLoopGetMain())
+    }
+}
 print("Launch NearBT on your device, set secret if necessary and turn on \"Enabled\"")
+print("Bluetooth pairing may be requested.")
 let delegate = CentralDelegate()
 let centralManager = CBCentralManager(delegate: delegate, queue: nil)
 
 CFRunLoopRun()
-

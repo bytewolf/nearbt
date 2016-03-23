@@ -21,12 +21,14 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate {
     }
     
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
-        print(peripheral.identifier)
+        let peripheralConfigurationFilePath = NSString(string:kPeripheralConfigurationFilePath).stringByExpandingTildeInPath
+        NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: peripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+        CFRunLoopStop(CFRunLoopGetMain())
     }
 }
 
 let delegate = CentralDelegate()
 let centralManager = CBCentralManager(delegate: delegate, queue: nil)
 
-dispatch_main()
+CFRunLoopRun()
 

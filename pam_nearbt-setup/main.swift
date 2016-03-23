@@ -58,23 +58,61 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
             CFRunLoopStop(CFRunLoopGetMain())
         }
         
-        NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: peripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+        func setupPeripheral() {
+            print("(1/3) Setup Peripheral")
+            let peripheralConfigurationFilePath = NSString(string:kPeripheralConfigurationFilePath).stringByExpandingTildeInPath
+            if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
+                print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n) ", terminator:"")
+                if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
+                    print("Canceled.")
+                    return
+                }
+            }
+            NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: peripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+            print("Success.")
+            return
+        }
+        
+        func setupSecret() {
+            print("(2/3) Setup Secret")
+            let defaultUserSecretFilePath = NSString(string: kDefaultUserSecretFilePath).stringByExpandingTildeInPath
+            if NSFileManager.defaultManager().fileExistsAtPath(defaultUserSecretFilePath) {
+                print("\(defaultUserSecretFilePath) exists, overwrite? (y/n) ", terminator:"")
+                if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
+                    print("Canceled.")
+                    return
+                }
+            }
+            var secret = ""
+            repeat {
+                secret = String.fromCString(getpass("Please enter your secret: ")) ?? ""
+            } while secret.isEmpty
+            NSFileManager.defaultManager().createFileAtPath(defaultUserSecretFilePath, contents: secret.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+            print("Success.")
+        }
+        
+        func setupPAM() {
+            print("(3/3) Setup PAM")
+            print("Add pam_nearbt in some files under /etc/pam.d/")
+            print("e.g.")
+            print("Add the following line at the beginning of /etc/pam.d/screensaver, so that you can unlock screensaver without password by using NearBT.")
+            print("auth       sufficient     pam_nearbt.so min_rssi=-55 timeout=10")
+            print("Note: this example is only for testing. It may increase security risks.")
+        }
+        
+        setupPeripheral()
+        setupSecret()
+        setupPAM()
+        
         print("Setup finished.")
         CFRunLoopStop(CFRunLoopGetMain())
     }
     
 }
 
-let peripheralConfigurationFilePath = NSString(string:kPeripheralConfigurationFilePath).stringByExpandingTildeInPath
-if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
-    print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n) ", terminator:"")
-    if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
-        print("Canceled.")
-        CFRunLoopStop(CFRunLoopGetMain())
-    }
-}
 print("Launch NearBT on your device, set secret if necessary and turn on \"Enabled\"")
 print("Bluetooth pairing may be requested.")
+
 let delegate = CentralDelegate()
 let centralManager = CBCentralManager(delegate: delegate, queue: nil)
 

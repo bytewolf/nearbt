@@ -14,5 +14,6 @@
 FOUNDATION_EXPORT NSString *const kServiceUUID;
 FOUNDATION_EXPORT NSString *const kCharacteristicUUID;
 FOUNDATION_EXPORT NSString *const kPeripheralConfigurationFilePath;
+FOUNDATION_EXPORT NSString *const kDefaultUserSecretFilePath;
 
 #endif /* Constants_h */

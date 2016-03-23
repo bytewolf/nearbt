@@ -11,7 +11,6 @@
 
 #define DEFAULT_MINIMUM_RSSI (-50)
 #define DEFAULT_TIMEOUT (5)
-#define DEFAULT_USER_SECRET_PATH "~/.config/pam_nearbt/secret"
 #define DEFAULT_GLOBAL_SECRET_PATH "/usr/local/etc/pam_nearbt/secret"
 
 struct cfg
@@ -102,8 +101,8 @@ get_valid_secret_path(const char *path, const char *homedir)
     if ([[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
         return secretPath.UTF8String;
     } else {
-        NSLog(@"%@ not found, %s is tried to be applied.", secretPath, DEFAULT_USER_SECRET_PATH);
-        secretPath = @DEFAULT_USER_SECRET_PATH;
+        NSLog(@"%@ not found, %s is tried to be applied.", secretPath, kDefaultUserSecretFilePath.UTF8String);
+        secretPath = kDefaultUserSecretFilePath;
     }
     
     if (!homedir) {

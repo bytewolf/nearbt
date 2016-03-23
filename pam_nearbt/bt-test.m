@@ -43,7 +43,6 @@ int main(int argc, const char * argv[]) {
         const char *password = [[[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding] UTF8String];
         int passwordMatched = check_password(secret, password);
         NSLog(@"Password matched: %d", passwordMatched);
-        dispatch_main();
         
     }
     return 0;

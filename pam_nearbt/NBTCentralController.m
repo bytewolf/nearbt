@@ -16,8 +16,6 @@
 @interface NBTCentralController ()
 @property (nonatomic) NSNumber *minimumRSSI;
 @property (nonatomic) NSUInteger allowedTimeout;
-@property (nonatomic) NSMutableSet *discoveredPeripheral; // "You must retain a local copy of the peripheral if any command is to be performed on it."
-@property (nonatomic) NSMutableSet *discardedPeripheral;
 @property (nonatomic) CBPeripheral *targetPeripheral;
 @property (nonatomic) CBCentralManager *centralManager;
 @property (nonatomic) NSData *valueData;
@@ -34,8 +32,6 @@
     if (self) {
         self.minimumRSSI = rssi;
         self.allowedTimeout = timeout;
-        self.discoveredPeripheral = [[NSMutableSet alloc] init];
-        self.discardedPeripheral = [[NSMutableSet alloc] init];
         self.targetPeripheral = nil;
         self.valueData = nil;
     }
@@ -78,41 +74,27 @@
     if (central.state != CBCentralManagerStatePoweredOn) {
         return;
     }
-    [central scanForPeripheralsWithServices:nil options:@{CBCentralManagerScanOptionAllowDuplicatesKey: @YES}];
-    NSLog(@"}}}");
-}
-
-- (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
-    NSLog(@"{{{ Central manager did discover peripheral: %@, RSSI: %@", peripheral.name, RSSI);
+    NSString *peripheralConfigurationFilePath = kPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
+        [self cleanup];
+        return;
+    }
+    NSString *uuidString = [NSString stringWithContentsOfFile:peripheralConfigurationFilePath encoding:NSUTF8StringEncoding error:nil];
+    NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:uuidString];
+    self.targetPeripheral = [central retrievePeripheralsWithIdentifiers:@[uuid]].lastObject;
     if (self.targetPeripheral) {
-        NSLog(@"}}} Target peripheral has been founded, stop.");
-        return;
-    }
-    if (RSSI.integerValue > -20 || RSSI.integerValue < self.minimumRSSI.integerValue) {
-        NSLog(@"}}} RSSI(%@) is invalid.", RSSI);
-        return;
-    }
-    if ([self.discoveredPeripheral containsObject:peripheral] || [self.discardedPeripheral containsObject:peripheral]) {
-        NSLog(@"}}} %@ is discovered again, stop.", peripheral.name);
-        return;
+        [central connectPeripheral:self.targetPeripheral options:nil];
     } else {
-        NSLog(@"Add peripheral in discoveredPeripherals.");
-        [self.discoveredPeripheral addObject:peripheral];
+        [self cleanup];
     }
-    
-    NSLog(@"}}} Try connecting …");
-    [central connectPeripheral:peripheral options:nil];
+    NSLog(@"}}}");
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
     NSLog(@"{{{ Central manager did connect peripheral: %@", peripheral.name);
-    if (self.targetPeripheral) {
-        NSLog(@"}}} Target peripheral has been founded, stop.");
-        return;
-    }
     peripheral.delegate = self;
-    NSLog(@"}}} Try discover the peripheral's services …");
-    [peripheral discoverServices:@[self.targetServiceUUID]];
+    NSLog(@"}}} Try read RSSI");
+    [peripheral readRSSI];
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
@@ -120,12 +102,20 @@
     [self cleanup];
 }
 
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
-    NSLog(@"{{{ Central manager did discover services %@", peripheral.services);
-    if (self.targetPeripheral) {
-        NSLog(@"}}} Target peripheral has been founded, stop.");
+- (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error {
+    NSNumber *RSSI = peripheral.RSSI;
+    NSLog(@"{{{ Peripheral did update RSSI, %@", RSSI);
+    if (RSSI.integerValue > -15 || RSSI.integerValue < self.minimumRSSI.integerValue) {
+        NSLog(@"}}} RSSI(%@) is invalid.", RSSI);
+        [self cleanup];
         return;
     }
+    NSLog(@"}}} Try discover the peripheral's services …");
+    [peripheral discoverServices:@[self.targetServiceUUID]];
+}
+
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
+    NSLog(@"{{{ Central manager did discover services %@", peripheral.services);
     if (error) {
         NSLog(@"}}} Error discovering services: %@", [error localizedDescription]);
         return;
@@ -140,14 +130,10 @@
     }
     if (targetService) {
         NSLog(@"Target service is found.\n");
-        NSLog(@"Current peripheral is stored.\n");
-        NSLog(@"}}} Further peripherals discovering, connecting and services discovering will be stopped.");
         self.targetPeripheral = peripheral;
         [peripheral discoverCharacteristics:@[self.targetCharacteristicUUID] forService:targetService];
     } else {
         NSLog(@"}}} Target service is not found.");
-        [self.discoveredPeripheral removeObject:peripheral];
-        [self.discardedPeripheral addObject:peripheral];
     }
 }
 
@@ -218,12 +204,6 @@
     
     self.centralManager.delegate = nil;
     self.centralManager = nil;
-    
-    [self.discoveredPeripheral removeAllObjects];
-    self.discoveredPeripheral = nil;
-    
-    [self.discardedPeripheral removeAllObjects];
-    self.discardedPeripheral = nil;
     
     self.targetPeripheral = nil;
 }

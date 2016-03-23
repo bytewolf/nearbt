@@ -15,7 +15,6 @@
 
 struct cfg
 {
-    BluetoothDeviceAddress bt_addr;
     BluetoothHCIRSSIValue min_rssi;
     unsigned timeout;
     const char *secret_path;
@@ -33,12 +32,6 @@ parse_cfg (int flags, int argc, const char *argv[], struct cfg *cfg)
     cfg->secret_path = "/usr/local/etc/pam_nearbt/secret";
     for (int i = 0; i < argc; i++)
     {
-        if (strncmp (argv[i], "bt_addr=", 8) == 0)
-        {
-            NSString *addressString = [NSString stringWithUTF8String:(argv[i] + 8)];
-            IOBluetoothNSStringToDeviceAddress(addressString, &(cfg->bt_addr));
-        }
-
         if (strncmp (argv[i], "min_rssi=", 9) == 0)
         {
             sscanf (argv[i], "min_rssi=%hhd", &cfg->min_rssi);

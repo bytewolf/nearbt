@@ -67,15 +67,18 @@ class ViewController: UIViewController, UITextFieldDelegate {
         switch PeripheralController.sharedController.bluetoothState {
         case .Unknown:
             informationLabel.text = "Waiting bluetooth …"
+            if UserDefaults.sharedUserDefaults.enabled == false {
+                informationLabel.text = "Please turn on \"Enabled\" switch."
+            }
             if OTPManager.sharedManager.hasSetSecret == false {
-                informationLabel.text = "Set secret first."
+                informationLabel.text = "Please set secret."
             }
         case .Unsupported:
             informationLabel.text = "Bluetooth low energy is not supported."
         case .PowerOff:
             informationLabel.text = "Please turn on Bluetooth."
         case .PairingRequired:
-            informationLabel.text = "Pairing required."
+            informationLabel.text = "Pairing required. This will be done automatically when you run pam_nearbt-setup on your Mac."
         case .Ready:
             if hasSetSecret {
                 var text = "Tap switch to turn on/off."

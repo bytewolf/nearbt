@@ -184,9 +184,9 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         NSString *uuidString = [NSString stringWithContentsOfFile:peripheralConfigurationFilePath encoding:NSUTF8StringEncoding error:nil];
         NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:uuidString];
         
-        NBTCentralController *controller = [[NBTCentralController alloc] initWithMinimumRSSI:[NSNumber numberWithInt:cfg->min_rssi] timeout:cfg->timeout];
+        NBTCentralController *controller = [[NBTCentralController alloc] init];
         
-        NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID] ofPeripheralUUID:uuid];
+        NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID] ofPeripheralUUID:uuid withMinimumRSSI:[NSNumber numberWithInt:cfg->min_rssi] withTimeout:cfg->timeout];
         if (value == nil) {
             NSLog(@"Fail to read value from peripheral");
             run(cfg->run_if_fail);

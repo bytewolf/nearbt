@@ -15,7 +15,6 @@
 
 @interface NBTCentralController ()
 @property (nonatomic) NSNumber *minimumRSSI;
-@property (nonatomic) NSUInteger allowedTimeout;
 @property (nonatomic) CBPeripheral *targetPeripheral;
 @property (nonatomic) CBCentralManager *centralManager;
 @property (nonatomic) NSData *valueData;
@@ -27,12 +26,10 @@
 
 @implementation NBTCentralController
 
-- (instancetype)initWithMinimumRSSI:(NSNumber *)rssi timeout:(NSUInteger)timeout {
+- (nullable instancetype)init {
     NSLog(@"{{{ NBTCentralController init.");
     self = [super init];
     if (self) {
-        self.minimumRSSI = rssi;
-        self.allowedTimeout = timeout;
         self.targetPeripheral = nil;
         self.valueData = nil;
     }
@@ -40,18 +37,19 @@
     return self;
 }
 
-- (NSData *)readValueForCharacteristicUUID:(CBUUID *)characteristicUUID ofServiceUUID:(CBUUID *)serviceUUID ofPeripheralUUID:(NSUUID *)peripheralUUID {
+- (nullable NSData *)readValueForCharacteristicUUID:(nonnull CBUUID *)characteristicUUID ofServiceUUID:(nonnull CBUUID *)serviceUUID ofPeripheralUUID:(nonnull NSUUID *)peripheralUUID withMinimumRSSI:(nullable NSNumber *)rssi withTimeout:(NSTimeInterval)timeout {
     NSLog(@"{{{ Trying reading value …");
     self.targetCharacteristicUUID = characteristicUUID;
     self.targetServiceUUID = serviceUUID;
     self.targetPeripheralUUID = peripheralUUID;
+    self.minimumRSSI = rssi;
     
     self.group = dispatch_group_create();
     dispatch_group_enter(self.group);
     
     self.centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)];
     
-    long status = dispatch_group_wait(self.group, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * self.allowedTimeout));
+    long status = dispatch_group_wait(self.group, dispatch_time(DISPATCH_TIME_NOW,NSEC_PER_SEC * timeout));
 
     NSData *result = self.valueData;
     

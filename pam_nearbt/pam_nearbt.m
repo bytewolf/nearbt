@@ -12,6 +12,7 @@
 #define DEFAULT_MINIMUM_RSSI (-50)
 #define DEFAULT_TIMEOUT (5)
 #define DEFAULT_GLOBAL_SECRET_PATH "/usr/local/etc/pam_nearbt/secret"
+#define DEFAULT_GLOBAL_PERIPHERAL_PATH "/usr/local/etc/pam_nearbt/peripheral"
 
 struct cfg
 {
@@ -171,6 +172,9 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         }
         
         NSString *peripheralConfigurationFilePath = kPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
+        if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
+            peripheralConfigurationFilePath = @DEFAULT_GLOBAL_PERIPHERAL_PATH;
+        }
         if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
             NSLog(@"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);
             run(cfg->run_if_fail);

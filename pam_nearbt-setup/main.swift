@@ -75,9 +75,8 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
         
         func setupSecret() {
             print("(2/3) Setup Secret")
-            let defaultUserSecretFilePath = NSString(string: kDefaultGlobalSecretFilePath).stringByExpandingTildeInPath
-            if NSFileManager.defaultManager().fileExistsAtPath(defaultUserSecretFilePath) {
-                print("\(defaultUserSecretFilePath) exists, overwrite? (y/n) ", terminator:"")
+            if NSFileManager.defaultManager().fileExistsAtPath(kDefaultGlobalSecretFilePath) {
+                print("\(kDefaultGlobalSecretFilePath) exists, overwrite? (y/n) ", terminator:"")
                 if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
                     print("Canceled.")
                     return
@@ -87,7 +86,7 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
             repeat {
                 secret = String.fromCString(getpass("Please enter your secret: ")) ?? ""
             } while secret.isEmpty
-            NSFileManager.defaultManager().createFileAtPath(defaultUserSecretFilePath, contents: secret.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+            NSFileManager.defaultManager().createFileAtPath(kDefaultGlobalSecretFilePath, contents: secret.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
             print("Success.")
         }
         

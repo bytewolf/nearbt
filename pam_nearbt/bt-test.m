@@ -28,6 +28,9 @@ int main(int argc, const char * argv[]) {
         
         NSString *peripheralConfigurationFilePath = kLocalPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
         if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
+            peripheralConfigurationFilePath = kGlobalPeripheralConfigurationFilePath;
+        }
+        if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
             NSLog(@"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);
             return -1;
         }

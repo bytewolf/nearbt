@@ -72,6 +72,7 @@
         return;
     }
     if (central.state != CBCentralManagerStatePoweredOn) {
+        NSLog(@"}}}");
         return;
     }
     self.targetPeripheral = [central retrievePeripheralsWithIdentifiers:@[self.targetPeripheralUUID]].lastObject;
@@ -122,8 +123,7 @@
         }
     }
     if (targetService) {
-        NSLog(@"Target service is found.\n");
-        self.targetPeripheral = peripheral;
+        NSLog(@"}}} Target service is found.");
         [peripheral discoverCharacteristics:@[self.targetCharacteristicUUID] forService:targetService];
     } else {
         NSLog(@"}}} Target service is not found.");

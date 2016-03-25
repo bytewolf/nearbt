@@ -60,7 +60,7 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
         
         func setupPeripheral() {
             print("(1/3) Setup Peripheral")
-            let peripheralConfigurationFilePath = NSString(string:kPeripheralConfigurationFilePath).stringByExpandingTildeInPath
+            let peripheralConfigurationFilePath = NSString(string:kLocalPeripheralConfigurationFilePath).stringByExpandingTildeInPath
             if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
                 print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n) ", terminator:"")
                 if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
@@ -75,7 +75,7 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
         
         func setupSecret() {
             print("(2/3) Setup Secret")
-            let defaultUserSecretFilePath = NSString(string: kDefaultUserSecretFilePath).stringByExpandingTildeInPath
+            let defaultUserSecretFilePath = NSString(string: kDefaultLocalSecretFilePath).stringByExpandingTildeInPath
             if NSFileManager.defaultManager().fileExistsAtPath(defaultUserSecretFilePath) {
                 print("\(defaultUserSecretFilePath) exists, overwrite? (y/n) ", terminator:"")
                 if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {

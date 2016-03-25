@@ -11,8 +11,6 @@
 
 #define DEFAULT_MINIMUM_RSSI (-50)
 #define DEFAULT_TIMEOUT (5)
-#define DEFAULT_GLOBAL_SECRET_PATH "/usr/local/etc/pam_nearbt/secret"
-#define DEFAULT_GLOBAL_PERIPHERAL_PATH "/usr/local/etc/pam_nearbt/peripheral"
 
 struct cfg
 {
@@ -85,8 +83,8 @@ get_valid_secret_path(const char *path, const char *homedir)
     
     if ([secretPath hasPrefix:@"~"]) {
         if (!homedir) {
-            NSLog(@"Fail to get current user directory, %s is tried to be applied.", DEFAULT_GLOBAL_SECRET_PATH);
-            return DEFAULT_GLOBAL_SECRET_PATH;
+            NSLog(@"Fail to get current user directory, %@ is tried to be applied.", kDefaultGlobalSecretFilePath);
+            return kDefaultGlobalSecretFilePath.UTF8String;
         }
         NSString *homeDirectory = [NSString stringWithUTF8String:homedir];
         secretPath = [homeDirectory stringByAppendingString:[secretPath substringFromIndex:1]];
@@ -95,13 +93,13 @@ get_valid_secret_path(const char *path, const char *homedir)
     if ([[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
         return secretPath.UTF8String;
     } else {
-        NSLog(@"%@ not found, %s is tried to be applied.", secretPath, kDefaultUserSecretFilePath.UTF8String);
-        secretPath = kDefaultUserSecretFilePath;
+        NSLog(@"%@ not found, %s is tried to be applied.", secretPath, kDefaultLocalSecretFilePath.UTF8String);
+        secretPath = kDefaultLocalSecretFilePath;
     }
     
     if (!homedir) {
-        NSLog(@"Fail to get current user directory, %s is tried to be applied.", DEFAULT_GLOBAL_SECRET_PATH);
-        return DEFAULT_GLOBAL_SECRET_PATH;
+        NSLog(@"Fail to get current user directory, %@ is tried to be applied.", kDefaultGlobalSecretFilePath);
+        return kDefaultGlobalSecretFilePath.UTF8String;
     }
     NSString *homeDirectory = [NSString stringWithUTF8String:homedir];
     secretPath = [homeDirectory stringByAppendingString:[secretPath substringFromIndex:1]];
@@ -109,8 +107,8 @@ get_valid_secret_path(const char *path, const char *homedir)
     if ([[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
         return secretPath.UTF8String;
     } else {
-        NSLog(@"%@ not found, %s is tried to be applied.", secretPath, DEFAULT_GLOBAL_SECRET_PATH);
-        return DEFAULT_GLOBAL_SECRET_PATH;
+        NSLog(@"%@ not found, %@ is tried to be applied.", secretPath, kDefaultGlobalSecretFilePath);
+        return kDefaultGlobalSecretFilePath.UTF8String;
     }
 }
 
@@ -171,9 +169,9 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
             return (PAM_AUTH_ERR);
         }
         
-        NSString *peripheralConfigurationFilePath = kPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
+        NSString *peripheralConfigurationFilePath = kLocalPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
         if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
-            peripheralConfigurationFilePath = @DEFAULT_GLOBAL_PERIPHERAL_PATH;
+            peripheralConfigurationFilePath = kGlobalPeripheralConfigurationFilePath;
         }
         if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
             NSLog(@"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);

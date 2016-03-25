@@ -26,7 +26,7 @@ int main(int argc, const char * argv[]) {
     
     @autoreleasepool {
         
-        NSString *peripheralConfigurationFilePath = kPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
+        NSString *peripheralConfigurationFilePath = kLocalPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
         if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
             NSLog(@"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);
             return -1;

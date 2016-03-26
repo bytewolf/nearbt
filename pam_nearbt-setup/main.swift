@@ -11,6 +11,7 @@ import CoreBluetooth
 
 class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     
+    var valueReadFromPeripheral = dispatch_semaphore_create(0)
     var targetPeripheral: CBPeripheral?
     
     let serviceUUID = CBUUID(string: kServiceUUID)
@@ -54,87 +55,110 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
     
     func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
         if let error = error {
-            print("Setup failure: \(error.localizedDescription)")
-            CFRunLoopStop(CFRunLoopGetMain())
+            fatalError("Setup failure: \(error.localizedDescription)")
         }
         
-        func setupPeripheral() {
-            print("(1/3) Setup Peripheral")
-            let peripheralConfigurationFilePath = NSString(string:kGlobalPeripheralConfigurationFilePath).stringByExpandingTildeInPath
-            if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
-                print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n) ", terminator:"")
-                if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
-                    print("Canceled.")
-                    return
-                }
-            }
-            NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: peripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
-            print("Success.")
-            return
-        }
+        dispatch_semaphore_signal(valueReadFromPeripheral)
         
-        func setupSecret() {
-            print("(2/3) Setup Secret")
-            if NSFileManager.defaultManager().fileExistsAtPath(kDefaultGlobalSecretFilePath) {
-                print("\(kDefaultGlobalSecretFilePath) exists, overwrite? (y/n) ", terminator:"")
-                if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
-                    print("Canceled.")
-                    return
-                }
-            }
-            var secret = ""
-            repeat {
-                secret = String.fromCString(getpass("Please enter your secret: ")) ?? ""
-            } while secret.isEmpty
-            NSFileManager.defaultManager().createFileAtPath(kDefaultGlobalSecretFilePath, contents: secret.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
-            print("Success.")
-        }
-        
-        func setupPAM() {
-            print("(3/3) Setup PAM")
-            print("Add pam_nearbt in some files under /etc/pam.d/")
-            print("e.g.")
-            print("Add the following line at the beginning of /etc/pam.d/screensaver, so that you can unlock screensaver without password by using NearBT.")
-            print("auth       sufficient     pam_nearbt.so min_rssi=-55 timeout=10")
-            print("Note: this example is only for testing. It may increase security risks.")
-        }
-        
-        setupPeripheral()
-        setupSecret()
-        setupPAM()
-        
-        print("Setup finished.")
-        CFRunLoopStop(CFRunLoopGetMain())
+        return
     }
     
 }
 
-let pamSourcePath = "/usr/local/lib/security/pam_nearbt.so"
-let pamTargetPath = "/usr/lib/pam/pam_nearbt.so"
-let command_ln = "ln -fs \(pamSourcePath) \(pamTargetPath)"
-let command_chown = "chown -h root:wheel \(pamTargetPath)"
-let command_chmod = "chmod -h 444 \(pamTargetPath)"
-print("The following command will create a symbolic link \(pamTargetPath) to \(pamSourcePath) and set permissions and ownership.")
-print("```")
-print(command_ln)
-print(command_chown)
-print(command_chmod)
-print("```")
-print("To allow these, type your password in the authentication dialog.")
-print()
-
-let script = "do shell script \"\(command_ln); \(command_chown); \(command_chmod)\" with administrator privileges"
-let appleScript = NSAppleScript(source: script)
-guard appleScript?.executeAndReturnError(nil) != nil else {
-    fatalError("Fail to link pam_nearbt.so")
+func installPAM() {
+    print("(1/3) Install PAM")
+    let pamSourcePath = "/usr/local/lib/security/pam_nearbt.so"
+    let pamTargetPath = "/usr/lib/pam/pam_nearbt.so"
+    if NSFileManager.defaultManager().fileExistsAtPath(pamTargetPath) {
+        print("Already installed.")
+        return
+    }
+    let command_ln = "ln -fs \(pamSourcePath) \(pamTargetPath)"
+    let command_chown = "chown -h root:wheel \(pamTargetPath)"
+    let command_chmod = "chmod -h 444 \(pamTargetPath)"
+    print("The following command will create a symbolic link \(pamTargetPath) to \(pamSourcePath) and set permissions and ownership.")
+    print("```")
+    print(command_ln)
+    print(command_chown)
+    print(command_chmod)
+    print("```")
+    print("To allow these, type your password in the authentication dialog.")
+    let script = "do shell script \"\(command_ln); \(command_chown); \(command_chmod)\" with administrator privileges"
+    let appleScript = NSAppleScript(source: script)
+    guard appleScript?.executeAndReturnError(nil) != nil else {
+        fatalError("Fail to link pam_nearbt.so")
+    }
+    print("Success.")
 }
-print("Success.")
+
+func setupPeripheral(peripheralUUID: NSUUID) {
+    print("(2/3) Setup Peripheral")
+    let peripheralConfigurationFilePath = NSString(string:kGlobalPeripheralConfigurationFilePath).stringByExpandingTildeInPath
+    if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
+        print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n) ", terminator:"")
+        if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
+            print("Canceled.")
+            return
+        }
+    }
+    NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: peripheralUUID.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+    print("Success.")
+    return
+}
+
+func setupSecret() {
+    print("(3/3) Setup Secret")
+    if NSFileManager.defaultManager().fileExistsAtPath(kDefaultGlobalSecretFilePath) {
+        print("\(kDefaultGlobalSecretFilePath) exists, overwrite? (y/n) ", terminator:"")
+        if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
+            print("Canceled.")
+            return
+        }
+    }
+    var secret = ""
+    repeat {
+        secret = String.fromCString(getpass("Please enter your secret: ")) ?? ""
+    } while secret.isEmpty
+    NSFileManager.defaultManager().createFileAtPath(kDefaultGlobalSecretFilePath, contents: secret.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+    print("Success.")
+}
+
+func setupPAM() {
+    print("Now you could add pam_nearbt.so in some files under /etc/pam.d/")
+    print()
+    print("e.g.")
+    print("Add the following line at the beginning of /etc/pam.d/screensaver, so that you can unlock screensaver without password by using NearBT.")
+    print("auth       sufficient     pam_nearbt.so min_rssi=-55 timeout=10")
+    print("Note: this example is only for testing. It may increase security risks.")
+}
+
+// MARK: - main() -
+
+installPAM()
 print()
 
 print("Launch NearBT on your device, set secret if necessary and turn on \"Enabled\"")
 print("Bluetooth pairing may be requested.")
+print()
 
 let delegate = CentralDelegate()
-let centralManager = CBCentralManager(delegate: delegate, queue: nil)
+let centralManager = CBCentralManager(delegate: delegate, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
 
-CFRunLoopRun()
+dispatch_semaphore_wait(delegate.valueReadFromPeripheral, DISPATCH_TIME_FOREVER)
+
+guard let targetPeripheral = delegate.targetPeripheral else {
+    fatalError("Fail to get peripheral UUID.")
+}
+
+setupPeripheral(targetPeripheral.identifier)
+print()
+
+setupSecret()
+print()
+
+print("Setup finished.")
+print()
+
+setupPAM()
+print()
+

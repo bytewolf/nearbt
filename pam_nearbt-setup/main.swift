@@ -109,6 +109,28 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
     
 }
 
+let pamSourcePath = "/usr/local/lib/security/pam_nearbt.so"
+let pamTargetPath = "/usr/lib/pam/pam_nearbt.so"
+let command_ln = "ln -fs \(pamSourcePath) \(pamTargetPath)"
+let command_chown = "chown -h root:wheel \(pamTargetPath)"
+let command_chmod = "chmod -h 444 \(pamTargetPath)"
+print("The following command will create a symbolic link \(pamTargetPath) to \(pamSourcePath) and set permissions and ownership.")
+print("```")
+print(command_ln)
+print(command_chown)
+print(command_chmod)
+print("```")
+print("To allow these, type your password in the authentication dialog.")
+print()
+
+let script = "do shell script \"\(command_ln); \(command_chown); \(command_chmod)\" with administrator privileges"
+let appleScript = NSAppleScript(source: script)
+guard appleScript?.executeAndReturnError(nil) != nil else {
+    fatalError("Fail to link pam_nearbt.so")
+}
+print("Success.")
+print()
+
 print("Launch NearBT on your device, set secret if necessary and turn on \"Enabled\"")
 print("Bluetooth pairing may be requested.")
 

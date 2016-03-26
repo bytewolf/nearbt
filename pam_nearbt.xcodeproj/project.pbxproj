@@ -387,10 +387,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
-				INSTALL_GROUP = wheel;
-				INSTALL_MODE_FLAG = "u+r,go+r,a-wx";
-				INSTALL_OWNER = root;
-				INSTALL_PATH = /usr/lib/pam;
+				INSTALL_PATH = /lib/security;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/pam_nearbt",
@@ -406,10 +403,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_EXTENSION = so;
 				EXECUTABLE_PREFIX = "";
-				INSTALL_GROUP = wheel;
-				INSTALL_MODE_FLAG = "u+r,go+r,a-wx";
-				INSTALL_OWNER = root;
-				INSTALL_PATH = /usr/lib/pam;
+				INSTALL_PATH = /lib/security;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/pam_nearbt",
@@ -423,6 +417,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
+				INSTALL_PATH = /bin;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "pam_nearbt-setup/pam_nearbt-setup-Bridging-Header.h";
@@ -435,6 +430,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
+				INSTALL_PATH = /bin;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "pam_nearbt-setup/pam_nearbt-setup-Bridging-Header.h";

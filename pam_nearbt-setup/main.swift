@@ -65,8 +65,38 @@ class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
     
 }
 
+func typeReturnToContinue() {
+    print()
+    print("Type return to continue …")
+    if readLine() != nil {
+        return
+    } else {
+        exit(EXIT_FAILURE)
+    }
+}
+
+func isSIPEnabled() -> Bool {
+    let pipe = NSPipe()
+    let task: NSTask = {
+        let task = NSTask()
+        task.launchPath = "/usr/bin/csrutil"
+        task.arguments = ["status"]
+        task.standardOutput = pipe
+        return task
+    }()
+    task.launch()
+    
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    guard let output = String(data: data, encoding: NSUTF8StringEncoding) else {
+        fatalError("Fail to check System Integrity Protection status.")
+    }
+    let isEnabled = output.containsString("enabled")
+    return isEnabled
+}
+
 func installPAM() {
     print("(1/3) Install PAM")
+    print()
     let pamSourcePath = "/usr/local/lib/security/pam_nearbt.so"
     let pamTargetPath = "/usr/lib/pam/pam_nearbt.so"
     if NSFileManager.defaultManager().fileExistsAtPath(pamTargetPath) {
@@ -76,38 +106,86 @@ func installPAM() {
     let command_ln = "ln -fs \(pamSourcePath) \(pamTargetPath)"
     let command_chown = "chown -h root:wheel \(pamTargetPath)"
     let command_chmod = "chmod -h 444 \(pamTargetPath)"
-    print("The following command will create a symbolic link \(pamTargetPath) to \(pamSourcePath) and set permissions and ownership.")
+    print("The following commands will create a symbolic link \(pamTargetPath) to \(pamSourcePath) and set permissions and ownership.")
     print("```")
     print(command_ln)
     print(command_chown)
     print(command_chmod)
     print("```")
-    print("To allow these, type your password in the authentication dialog.")
+    typeReturnToContinue()
+    if isSIPEnabled() {
+        print("System Integrity Protection (SIP) is enabled on your OS X.")
+        print("To install files in /usr/, you have to turn off SIP.")
+        print("Follow the instructions below to turn off SIP, and then relaunch this setup.")
+        print("1. Shut down your computer.")
+        print("2. Start your computer from Recovery (hold down Command+R at startup).")
+        print("3. Launch Terminal under Utilities in menu bar.")
+        print("4. Type \"csrutil disable\" to turn off SIP.")
+        print("   (After installation, remember to turn on SIP for system security by typing \"csrutil enable\")")
+        print("5. Restart your computer.")
+        typeReturnToContinue()
+        exit(EXIT_FAILURE)
+    }
+    print("To allow these commands, type your password in the authentication dialog.")
+    typeReturnToContinue()
     let script = "do shell script \"\(command_ln); \(command_chown); \(command_chmod)\" with administrator privileges"
     let appleScript = NSAppleScript(source: script)
-    guard appleScript?.executeAndReturnError(nil) != nil else {
-        fatalError("Fail to link pam_nearbt.so")
+    var errorInfo = NSDictionary?()
+    guard appleScript?.executeAndReturnError(&errorInfo) != nil else {
+        print("Fail to install pam_nearbt.")
+        guard let errorInfo = errorInfo else {
+            fatalError("Fail to read error information.")
+        }
+        guard let errorNumber = errorInfo[NSAppleScriptErrorNumber] as? NSNumber else {
+            fatalError("Fail to read error number.")
+        }
+        switch errorNumber.integerValue {
+        case -128:
+            print("Canceled.")
+            exit(EXIT_FAILURE)
+        default:
+            print("Please send the following error information to guochen42+nearbt@gmail.com, thank you.")
+            print(errorInfo)
+            exit(EXIT_FAILURE)
+        }
     }
     print("Success.")
 }
 
-func setupPeripheral(peripheralUUID: NSUUID) {
+func setupPeripheral() {
     print("(2/3) Setup Peripheral")
+    print()
+    print("Launch NearBT on your iOS device, set secret if necessary and turn on \"Enabled\".")
+    print("Bluetooth pairing may be requested.")
+    typeReturnToContinue()
+    
+    let delegate = CentralDelegate()
+    let manager = CBCentralManager(delegate: delegate, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
+    
+    dispatch_semaphore_wait(delegate.valueReadFromPeripheral, DISPATCH_TIME_FOREVER)
+    
+    guard let targetPeripheral = delegate.targetPeripheral else {
+        manager.delegate = nil
+        fatalError("Fail to get peripheral UUID.")
+    }
     let peripheralConfigurationFilePath = NSString(string:kGlobalPeripheralConfigurationFilePath).stringByExpandingTildeInPath
     if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
         print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n) ", terminator:"")
         if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
+            manager.delegate = nil
             print("Canceled.")
             return
         }
     }
-    NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: peripheralUUID.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+    NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: targetPeripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+    manager.delegate = nil
     print("Success.")
     return
 }
 
 func setupSecret() {
     print("(3/3) Setup Secret")
+    print()
     if NSFileManager.defaultManager().fileExistsAtPath(kDefaultGlobalSecretFilePath) {
         print("\(kDefaultGlobalSecretFilePath) exists, overwrite? (y/n) ", terminator:"")
         if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
@@ -135,30 +213,15 @@ func setupPAM() {
 // MARK: - main() -
 
 installPAM()
-print()
+typeReturnToContinue()
 
-print("Launch NearBT on your device, set secret if necessary and turn on \"Enabled\"")
-print("Bluetooth pairing may be requested.")
-print()
-
-let delegate = CentralDelegate()
-let centralManager = CBCentralManager(delegate: delegate, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
-
-dispatch_semaphore_wait(delegate.valueReadFromPeripheral, DISPATCH_TIME_FOREVER)
-
-guard let targetPeripheral = delegate.targetPeripheral else {
-    fatalError("Fail to get peripheral UUID.")
-}
-
-setupPeripheral(targetPeripheral.identifier)
-print()
+setupPeripheral()
+typeReturnToContinue()
 
 setupSecret()
-print()
+typeReturnToContinue()
 
 print("Setup finished.")
 print()
 
 setupPAM()
-print()
-

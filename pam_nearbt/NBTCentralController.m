@@ -11,6 +11,7 @@
 #import <time.h>
 
 #import "../Constants.h"
+#import "Log.h"
 #import "oath.h"
 
 @interface NBTCentralController ()
@@ -26,19 +27,8 @@
 
 @implementation NBTCentralController
 
-- (nullable instancetype)init {
-    NSLog(@"{{{ NBTCentralController init.");
-    self = [super init];
-    if (self) {
-        self.targetPeripheral = nil;
-        self.valueData = nil;
-    }
-    NSLog(@"}}} End of NBTCentralController init.");
-    return self;
-}
-
 - (nullable NSData *)readValueForCharacteristicUUID:(nonnull CBUUID *)characteristicUUID ofServiceUUID:(nonnull CBUUID *)serviceUUID ofPeripheralUUID:(nonnull NSUUID *)peripheralUUID withMinimumRSSI:(nullable NSNumber *)rssi withTimeout:(NSTimeInterval)timeout {
-    NSLog(@"{{{ Trying reading value …");
+    Log(self.debug, @"{{{ Trying reading value …");
     self.targetCharacteristicUUID = characteristicUUID;
     self.targetServiceUUID = serviceUUID;
     self.targetPeripheralUUID = peripheralUUID;
@@ -55,24 +45,24 @@
     
     [self cleanup];
     
-    NSLog(@"dispatch_group_wait return status: %ld", status);
+    Log(self.debug, @"dispatch_group_wait return status: %ld", status);
     
     if (status != 0) {
-        NSLog(@"}}} dispatch_group_wait timeout.");
+        Log(self.debug, @"}}} dispatch_group_wait timeout.");
         return nil;
     }
-    NSLog(@"}}} End of reading value.");
+    Log(self.debug, @"}}} End of reading value.");
     return result;
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    NSLog(@"{{{ Central manager did update state: %ld", central.state);
+    Log(self.debug, @"{{{ Central manager did update state: %ld", central.state);
     if (self.targetPeripheral) {
-        NSLog(@"}}} Target peripheral has been founded, stop.");
+        Log(self.debug, @"}}} Target peripheral has been founded, stop.");
         return;
     }
     if (central.state != CBCentralManagerStatePoweredOn) {
-        NSLog(@"}}}");
+        Log(self.debug, @"}}}");
         return;
     }
     self.targetPeripheral = [central retrievePeripheralsWithIdentifiers:@[self.targetPeripheralUUID]].lastObject;
@@ -81,37 +71,39 @@
     } else {
         [self cleanup];
     }
-    NSLog(@"}}}");
+    Log(self.debug, @"}}}");
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
-    NSLog(@"{{{ Central manager did connect peripheral: %@", peripheral.name);
+    Log(self.debug, @"{{{ Central manager did connect peripheral: %@", peripheral.name);
     peripheral.delegate = self;
-    NSLog(@"}}} Try read RSSI");
+    Log(self.debug, @"}}} Try read RSSI");
     [peripheral readRSSI];
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    NSLog(@"Fail to connect to %@: %@", peripheral, [error localizedDescription]);
+    Log(YES, @"Fail to connect to %@: %@", peripheral, [error localizedDescription]);
     [self cleanup];
 }
 
 - (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error {
     NSNumber *RSSI = peripheral.RSSI;
-    NSLog(@"{{{ Peripheral did update RSSI, %@", RSSI);
+    Log(self.debug, @"{{{ Peripheral did update RSSI, %@", RSSI);
     if (RSSI.integerValue > -15 || RSSI.integerValue < self.minimumRSSI.integerValue) {
-        NSLog(@"}}} RSSI(%@) is invalid.", RSSI);
+        Log(YES, @"RSSI(%@) is invalid.", RSSI);
+        Log(self.debug, @"}}}", RSSI);
         [self cleanup];
         return;
     }
-    NSLog(@"}}} Try discover the peripheral's services …");
+    Log(self.debug, @"}}} Try discover the peripheral's services …");
     [peripheral discoverServices:@[self.targetServiceUUID]];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
-    NSLog(@"{{{ Central manager did discover services %@", peripheral.services);
+    Log(self.debug, @"{{{ Central manager did discover services %@", peripheral.services);
     if (error) {
-        NSLog(@"}}} Error discovering services: %@", [error localizedDescription]);
+        Log(YES, @"Error discovering services: %@", [error localizedDescription]);
+        Log(self.debug, @"}}}");
         return;
     }
     CBService *targetService = nil;
@@ -123,17 +115,19 @@
         }
     }
     if (targetService) {
-        NSLog(@"}}} Target service is found.");
+        Log(self.debug, @"}}} Target service is found.");
         [peripheral discoverCharacteristics:@[self.targetCharacteristicUUID] forService:targetService];
     } else {
-        NSLog(@"}}} Target service is not found.");
+        Log(YES, @"Target service is not found.");
+        Log(self.debug, @"}}}");
     }
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
-    NSLog(@"{{{ Central manager did discover characteristics %@", service.characteristics);
+    Log(self.debug, @"{{{ Central manager did discover characteristics %@", service.characteristics);
     if (error) {
-        NSLog(@"}}} Error discovering characteristics: %@", [error localizedDescription]);
+        Log(YES, @"Error discovering characteristics: %@", [error localizedDescription]);
+        Log(self.debug, @"}}}");
         [self cleanup];
         return;
     }
@@ -145,21 +139,22 @@
         }
     }
     if (targetCharacteristic) {
-        NSLog(@"}}} Target characteristic is found, try reading and subscribing it.");
+        Log(self.debug, @"}}} Target characteristic is found, try reading and subscribing it.");
         [peripheral readValueForCharacteristic:targetCharacteristic];
         [peripheral setNotifyValue:YES forCharacteristic:targetCharacteristic];
     }
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    NSLog(@"{{{ Peripheral did update value.");
+    Log(self.debug, @"{{{ Peripheral did update value.");
     if (error) {
-        NSLog(@"}}} Error did update value: %@", [error localizedDescription]);
+        Log(YES, @"Error did update value: %@", [error localizedDescription]);
+        Log(self.debug, @"}}}");
         [self cleanup];
         return;
     }
     self.valueData = characteristic.value;
-    NSLog(@"}}} Get target characteristic value: %@", self.valueData);
+    Log(self.debug, @"}}} Get target characteristic value: %@", self.valueData);
     if (self.group) {
         dispatch_group_leave(self.group);
         self.group = nil;

@@ -11,7 +11,8 @@
 
 @interface NBTCentralController : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 
-- (nullable instancetype)init;
+@property (nonatomic) BOOL debug;
+
 - (nullable NSData *)readValueForCharacteristicUUID:(nonnull CBUUID *)characteristicUUID ofServiceUUID:(nonnull CBUUID *)serviceUUID ofPeripheralUUID:(nonnull NSUUID *)peripheralUUID withMinimumRSSI:(nullable NSNumber *)rssi withTimeout:(NSTimeInterval)timeout;
 
 @end

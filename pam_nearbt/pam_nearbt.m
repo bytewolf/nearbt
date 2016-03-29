@@ -7,6 +7,7 @@
 #import <IOBluetooth/IOBluetoothUtilities.h>
 
 #import "Constants.h"
+#import "Log.h"
 #import "NBTCentralController.h"
 
 #define DEFAULT_MINIMUM_RSSI (-50)
@@ -14,6 +15,7 @@
 
 struct cfg
 {
+    BOOL debug;
     BluetoothHCIRSSIValue min_rssi;
     unsigned timeout;
     const char *secret_path;
@@ -26,11 +28,16 @@ static void
 parse_cfg (int flags, int argc, const char *argv[], struct cfg *cfg)
 {
     memset (cfg, 0, sizeof(struct cfg));
+    cfg->debug = NO;
     cfg->min_rssi = DEFAULT_MINIMUM_RSSI;
     cfg->timeout = DEFAULT_TIMEOUT;
     cfg->secret_path = "/usr/local/etc/pam_nearbt/secret";
     for (int i = 0; i < argc; i++)
     {
+        if (strcmp (argv[i], "debug") == 0)
+        {
+            cfg->debug = YES;
+        }
         if (strncmp (argv[i], "min_rssi=", 9) == 0)
         {
             sscanf (argv[i], "min_rssi=%hhd", &cfg->min_rssi);
@@ -77,13 +84,13 @@ get_home_dir(pam_handle_t *pamh)
 }
 
 extern const char *
-get_valid_secret_path(const char *path, const char *homedir)
+get_valid_secret_path(const char *path, const char *homedir, struct cfg *cfg)
 {
     NSString *secretPath = [NSString stringWithUTF8String:path];
     
     if ([secretPath hasPrefix:@"~"]) {
         if (!homedir) {
-            NSLog(@"Fail to get current user directory, %@ is tried to be applied.", kDefaultGlobalSecretFilePath);
+            Log(YES, @"Fail to get current user directory, %@ is tried to be applied.", kDefaultGlobalSecretFilePath);
             return kDefaultGlobalSecretFilePath.UTF8String;
         }
         NSString *homeDirectory = [NSString stringWithUTF8String:homedir];
@@ -93,12 +100,12 @@ get_valid_secret_path(const char *path, const char *homedir)
     if ([[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
         return secretPath.UTF8String;
     } else {
-        NSLog(@"%@ not found, %s is tried to be applied.", secretPath, kDefaultLocalSecretFilePath.UTF8String);
+        Log(YES, @"%@ not found, %s is tried to be applied.", secretPath, kDefaultLocalSecretFilePath.UTF8String);
         secretPath = kDefaultLocalSecretFilePath;
     }
     
     if (!homedir) {
-        NSLog(@"Fail to get current user directory, %@ is tried to be applied.", kDefaultGlobalSecretFilePath);
+        Log(YES, @"Fail to get current user directory, %@ is tried to be applied.", kDefaultGlobalSecretFilePath);
         return kDefaultGlobalSecretFilePath.UTF8String;
     }
     NSString *homeDirectory = [NSString stringWithUTF8String:homedir];
@@ -107,7 +114,7 @@ get_valid_secret_path(const char *path, const char *homedir)
     if ([[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
         return secretPath.UTF8String;
     } else {
-        NSLog(@"%@ not found, %@ is tried to be applied.", secretPath, kDefaultGlobalSecretFilePath);
+        Log(YES, @"%@ not found, %@ is tried to be applied.", secretPath, kDefaultGlobalSecretFilePath);
         return kDefaultGlobalSecretFilePath.UTF8String;
     }
 }
@@ -150,22 +157,22 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
 {
     @autoreleasepool {
         
-        NSLog(@"------ Start of pam_nearbt ------");
-        
         struct cfg cfg_st;
         struct cfg *cfg = &cfg_st;
         parse_cfg (flags, argc, argv, cfg);
         
+        Log(cfg->debug, @"------ Start of pam_nearbt ------");
+        
         run(cfg->run_always);
         
         const char *homedir = get_home_dir(pamh);
-        const char *secret_path = get_valid_secret_path(cfg->secret_path, homedir);
+        const char *secret_path = get_valid_secret_path(cfg->secret_path, homedir, cfg);
         
         NSString *secretPath = [NSString stringWithCString:secret_path encoding:NSUTF8StringEncoding];
         if (![[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
-            NSLog(@"Secret file %@ not exist", secretPath);
+            Log(YES, @"Secret file %@ not exist", secretPath);
             run(cfg->run_if_fail);
-            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
+            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
         
@@ -174,50 +181,46 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
             peripheralConfigurationFilePath = kGlobalPeripheralConfigurationFilePath;
         }
         if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
-            NSLog(@"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);
+            Log(YES, @"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);
             run(cfg->run_if_fail);
-            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
+            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
         NSString *uuidString = [NSString stringWithContentsOfFile:peripheralConfigurationFilePath encoding:NSUTF8StringEncoding error:nil];
         NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:uuidString];
         
         NBTCentralController *controller = [[NBTCentralController alloc] init];
+        controller.debug = cfg->debug;
         
         NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID] ofPeripheralUUID:uuid withMinimumRSSI:[NSNumber numberWithInt:cfg->min_rssi] withTimeout:cfg->timeout];
         if (value == nil) {
-            NSLog(@"Fail to read value from peripheral");
+            Log(YES, @"Fail to read value from peripheral");
             run(cfg->run_if_fail);
-            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
+            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
-        NSLog(@"Read value: %@", value);
+        Log(cfg->debug, @"Read value: %@", value);
         
         const char *secret = [[[NSString stringWithContentsOfFile:secretPath encoding:NSUTF8StringEncoding error:nil] stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] UTF8String];
         if (!secret) {
-            NSLog(@"Fail to read secret file.");
+            Log(YES, @"Fail to read secret file %@", secretPath);
             run(cfg->run_if_fail);
-            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
-            return (PAM_AUTH_ERR);
-        }
-        if (secret == nil) {
-            NSLog(@"Fail to read secret file %@", secretPath);
-            run(cfg->run_if_fail);
-            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
+            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
         
         const char *password = [[[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding] UTF8String];
         int passwordMatched = check_password(secret, password);
-        NSLog(@"Password matched: %d", passwordMatched);
         
         if (passwordMatched == 0) {
+            Log(YES, @"TOTP matched.");
             run(cfg->run_if_success);
-            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_SUCCESS));
+            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_SUCCESS));
             return (PAM_SUCCESS);
         } else {
+            Log(YES, @"TOTP not matched.");
             run(cfg->run_if_fail);
-            NSLog(@"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
+            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
             return (PAM_AUTH_ERR);
         }
     }

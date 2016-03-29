@@ -11,6 +11,7 @@
 		BD1306811C978D26008BA36B /* bt-test.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5001C97888E0055FB3F /* bt-test.m */; };
 		BD1306821C978D3A008BA36B /* NBTCentralController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E5031C97889B0055FB3F /* NBTCentralController.m */; };
 		BD1306841C978D55008BA36B /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E50D1C9789050055FB3F /* Constants.m */; };
+		BD22469C1CAAB20E000F0696 /* Log.h in Headers */ = {isa = PBXBuildFile; fileRef = BD22469B1CAAB20E000F0696 /* Log.h */; };
 		BD2546B81CA52262005002F4 /* liboath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD2546B71CA52262005002F4 /* liboath.a */; };
 		BD2546B91CA52262005002F4 /* liboath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD2546B71CA52262005002F4 /* liboath.a */; };
 		BD45E5061C97889B0055FB3F /* NBTCentralController.h in Headers */ = {isa = PBXBuildFile; fileRef = BD45E5021C97889B0055FB3F /* NBTCentralController.h */; };
@@ -23,6 +24,8 @@
 		BD487CDF1C9D8AC6007091F4 /* libpam.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BD487CDD1C9D8AC6007091F4 /* libpam.dylib */; };
 		BD5019641CA2071A00C6E6A8 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5019631CA2071A00C6E6A8 /* main.swift */; };
 		BD50196B1CA20C0100C6E6A8 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = BD45E50D1C9789050055FB3F /* Constants.m */; };
+		BD6AB4B31CAAB77C0006A286 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = BD6AB4B21CAAB77C0006A286 /* Log.m */; };
+		BD6AB4B41CAAB77C0006A286 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = BD6AB4B21CAAB77C0006A286 /* Log.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -48,6 +51,7 @@
 
 /* Begin PBXFileReference section */
 		BD13067A1C978D20008BA36B /* bt-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "bt-test"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD22469B1CAAB20E000F0696 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Log.h; path = pam_nearbt/Log.h; sourceTree = "<group>"; };
 		BD2546B71CA52262005002F4 /* liboath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liboath.a; path = pam_nearbt/liboath.a; sourceTree = "<group>"; };
 		BD45E4F81C97882A0055FB3F /* pam_nearbt.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pam_nearbt.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD45E5001C97888E0055FB3F /* bt-test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "bt-test.m"; path = "pam_nearbt/bt-test.m"; sourceTree = "<group>"; };
@@ -61,6 +65,7 @@
 		BD5019611CA2071A00C6E6A8 /* pam_nearbt-setup */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "pam_nearbt-setup"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD5019631CA2071A00C6E6A8 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		BD5019681CA2080100C6E6A8 /* pam_nearbt-setup-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pam_nearbt-setup-Bridging-Header.h"; sourceTree = "<group>"; };
+		BD6AB4B21CAAB77C0006A286 /* Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Log.m; path = pam_nearbt/Log.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +128,8 @@
 				BD45E5001C97888E0055FB3F /* bt-test.m */,
 				BD45E5051C97889B0055FB3F /* pam_nearbt.m */,
 				BD487CDD1C9D8AC6007091F4 /* libpam.dylib */,
+				BD22469B1CAAB20E000F0696 /* Log.h */,
+				BD6AB4B21CAAB77C0006A286 /* Log.m */,
 			);
 			name = pam_nearbt;
 			sourceTree = "<group>";
@@ -144,6 +151,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD45E5081C97889B0055FB3F /* oath.h in Headers */,
+				BD22469C1CAAB20E000F0696 /* Log.h in Headers */,
 				BD45E5061C97889B0055FB3F /* NBTCentralController.h in Headers */,
 				BD45E50E1C9789050055FB3F /* Constants.h in Headers */,
 			);
@@ -249,6 +257,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD05FB0C1C981E130067475F /* pam_nearbt.m in Sources */,
+				BD6AB4B41CAAB77C0006A286 /* Log.m in Sources */,
 				BD1306811C978D26008BA36B /* bt-test.m in Sources */,
 				BD1306821C978D3A008BA36B /* NBTCentralController.m in Sources */,
 				BD1306841C978D55008BA36B /* Constants.m in Sources */,
@@ -261,6 +270,7 @@
 			files = (
 				BD45E5091C97889B0055FB3F /* pam_nearbt.m in Sources */,
 				BD45E5071C97889B0055FB3F /* NBTCentralController.m in Sources */,
+				BD6AB4B31CAAB77C0006A286 /* Log.m in Sources */,
 				BD45E50F1C9789050055FB3F /* Constants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

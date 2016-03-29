@@ -47,7 +47,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		BD00BEEF1CA115B800CB5194 /* install-pam_nearbt.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-pam_nearbt.sh"; sourceTree = "<group>"; };
 		BD13067A1C978D20008BA36B /* bt-test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "bt-test"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD2546B71CA52262005002F4 /* liboath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liboath.a; path = pam_nearbt/liboath.a; sourceTree = "<group>"; };
 		BD45E4F81C97882A0055FB3F /* pam_nearbt.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pam_nearbt.so; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,7 +123,6 @@
 				BD45E5001C97888E0055FB3F /* bt-test.m */,
 				BD45E5051C97889B0055FB3F /* pam_nearbt.m */,
 				BD487CDD1C9D8AC6007091F4 /* libpam.dylib */,
-				BD00BEEF1CA115B800CB5194 /* install-pam_nearbt.sh */,
 			);
 			name = pam_nearbt;
 			sourceTree = "<group>";

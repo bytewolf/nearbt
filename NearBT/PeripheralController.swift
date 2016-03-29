@@ -34,7 +34,9 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     var state: State = .Stopped
     var bluetoothState: BluetoothState = .Unknown {
         didSet {
-            NSNotificationCenter.defaultCenter().postNotificationName(notificationKeyBluetoothStateChanged, object: self)
+            dispatch_async(dispatch_get_main_queue()) {
+                NSNotificationCenter.defaultCenter().postNotificationName(notificationKeyBluetoothStateChanged, object: self)
+            }
         }
     }
     var peripheralManager: CBPeripheralManager!

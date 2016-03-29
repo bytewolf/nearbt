@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Nearbt by guoc</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Nearbt</h1>
+        <p>Authenticate on OS X with iPhone Bluetooth LE.</p>
+
+        <p class="view"><a href="https://github.com/guoc/nearbt">View the Project on GitHub <small>guoc/nearbt</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/guoc/nearbt/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/guoc/nearbt/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/guoc/nearbt">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="nearbt" class="anchor" href="#nearbt" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>NearBT</h1>
+
+<p>A pluggable authentication module (PAM) on OS X for local authentication with iOS devices (NearBT installed) via Bluetooth LE.</p>
+
+<h2>
+<a id="with-nearbt-you-can" class="anchor" href="#with-nearbt-you-can" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>With NearBT, you can,</h2>
+
+<ul>
+<li>Unlock OS X screen saver without typing password (just type return). <em>No need to store your password.</em>
+</li>
+<li>Add an extra authentication to log in OS X in addition to password. It works like two-factor authentication.</li>
+</ul>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+
+<h3>
+<a id="security" class="anchor" href="#security" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Security</h3>
+
+<ul>
+<li>OS X passwords are not saved somewhere regardless of whether passwords are encrypted.</li>
+<li>iOS device identifiers are used in Bluetooth connections.</li>
+<li>Bluetooth pairing is required.</li>
+<li>Time-based One-time Password Algorithm (<a href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm">TOTP</a>) is used to authenticate.</li>
+<li>Open source for both OS X and iOS.</li>
+</ul>
+
+<h3>
+<a id="energy" class="anchor" href="#energy" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Energy</h3>
+
+<ul>
+<li>Only create a connection when an authentication starts. Stop the connection once the authentication finishes.</li>
+<li>Thanks to Bluetooth Low Energy, it's about 1% in 7 days from iOS's battery usage report.</li>
+</ul>
+
+<h2>
+<a id="compatibility" class="anchor" href="#compatibility" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compatibility</h2>
+
+<ul>
+<li>OS X (&gt;= 10.10)</li>
+<li>iOS (&gt;= 9)</li>
+</ul>
+
+<hr>
+
+<ul>
+<li>MacBook (&gt;= 2015)</li>
+<li>MacBook Air (&gt;= 2011)</li>
+<li>MacBook Pro (&gt;= 2012)</li>
+<li>Mac Mini (&gt;= 2011)</li>
+<li>Mac Pro (&gt;= 2013)</li>
+<li>iMac (&gt;= 2012)</li>
+</ul>
+
+<hr>
+
+<ul>
+<li>iPhone (&gt;= 4S)</li>
+<li>iPad (&gt;= 4th gen)</li>
+<li>iPad mini</li>
+<li>iPad Air</li>
+<li>iPod Touch (&gt;= 5th gen)</li>
+</ul>
+
+<h2>
+<a id="it-contains" class="anchor" href="#it-contains" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>It contains,</h2>
+
+<ul>
+<li>An iOS app -- <code>NearBT</code>
+</li>
+<li>A pluggable authentication module (PAM) on OS X -- <code>pam_nearbt.so</code>
+</li>
+<li>A command line setup tool -- <code>pam_nearbt-setup</code>
+</li>
+</ul>
+
+<h2>
+<a id="uninstallation" class="anchor" href="#uninstallation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Uninstallation</h2>
+
+<p>Know how to uninstall it before installation.</p>
+
+<ol>
+<li><p>Remove related configuration lines in /etc/pam.d/ before uninstallation.</p></li>
+<li>
+<p>Remove installed files.</p>
+
+<pre><code>sudo rm /usr/local/lib/security/pam_nearbt.so
+sudo rm /usr/local/bin/pam_nearbt-setup
+</code></pre>
+</li>
+<li>
+<p>If you want to remove all configuration files,</p>
+
+<pre><code>rm ~/.config/pam_nearbt/peripheral
+rm ~/.config/pam_nearbt/secret
+sudo rm /usr/local/etc/pam_nearbt/peripheral
+sudo rm /usr/local/etc/pam_nearbt/secret
+</code></pre>
+
+<p>If you have set other secret path in the PAM's parameters, remember to remove it.</p>
+</li>
+</ol>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<ul>
+<li>Open <code>NearBT.xcodeproj</code> in Xcode, build and run NearBT on your iOS devices.</li>
+<li>Open <code>pam_nearbt-installer-signed.pkg</code> and complete the installation.</li>
+<li>Open Terminal, run <code>pam_nearbt-setup</code> and follow the instructions.</li>
+</ul>
+
+<h2>
+<a id="alternatives" class="anchor" href="#alternatives" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Alternatives</h2>
+
+<h3>
+<a id="ios-and-os-x" class="anchor" href="#ios-and-os-x" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>iOS and OS X</h3>
+
+<ul>
+<li><a href="http://www.knocktounlock.com">Knock</a></li>
+<li><a href="http://macid.co"><em>MacID</em></a></li>
+<li><a href="http://nearlock.me">Near Lock</a></li>
+<li><a href="http://www.hellotether.com">Tether</a></li>
+</ul>
+
+<h3>
+<a id="other" class="anchor" href="#other" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Other</h3>
+
+<ul>
+<li>libpam-blue</li>
+<li><a href="http://blueproximity.sourceforge.net">BlueProximity</a></li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/guoc">guoc</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>

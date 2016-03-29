@@ -76,10 +76,14 @@ func typeReturnToContinue() {
 }
 
 func isSIPEnabled() -> Bool {
+    let csrutilPath = "/usr/bin/csrutil"
+    if NSFileManager.defaultManager().fileExistsAtPath(csrutilPath) == false {
+        return false
+    }
     let pipe = NSPipe()
     let task: NSTask = {
         let task = NSTask()
-        task.launchPath = "/usr/bin/csrutil"
+        task.launchPath = csrutilPath
         task.arguments = ["status"]
         task.standardOutput = pipe
         return task

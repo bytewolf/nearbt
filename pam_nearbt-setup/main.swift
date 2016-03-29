@@ -9,6 +9,23 @@
 import Foundation
 import CoreBluetooth
 
+extension NSFileManager {
+    
+    func createConfigurationFileAtPath(path: String, contents data: NSData?) -> Bool {
+        guard let directoryPath = NSURL(fileURLWithPath: path, isDirectory: false).URLByDeletingLastPathComponent?.path else {
+            fatalError("Fail to get directory of \(path)")
+        }
+        do {
+            try createDirectoryAtPath(directoryPath, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            fatalError("Fail to create directory of \(path)")
+        }
+        let created = createFileAtPath(path, contents: data, attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+        return created
+    }
+
+}
+
 class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     var valueReadFromPeripheral = dispatch_semaphore_create(0)
@@ -181,7 +198,12 @@ func setupPeripheral() {
             return
         }
     }
-    NSFileManager.defaultManager().createFileAtPath(peripheralConfigurationFilePath, contents: targetPeripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+    
+    let created = NSFileManager.defaultManager().createConfigurationFileAtPath(peripheralConfigurationFilePath, contents: targetPeripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding))
+    if !created {
+        print("Fail to create peripheral at \(peripheralConfigurationFilePath)")
+        exit(EXIT_FAILURE)
+    }
     manager.delegate = nil
     print("Success.")
     return
@@ -201,7 +223,11 @@ func setupSecret() {
     repeat {
         secret = String.fromCString(getpass("Please enter your secret: ")) ?? ""
     } while secret.isEmpty
-    NSFileManager.defaultManager().createFileAtPath(kDefaultGlobalSecretFilePath, contents: secret.dataUsingEncoding(NSUTF8StringEncoding), attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+    let created = NSFileManager.defaultManager().createConfigurationFileAtPath(kDefaultGlobalSecretFilePath, contents: secret.dataUsingEncoding(NSUTF8StringEncoding))
+    if !created {
+        print("Fail to create secret at \(kDefaultGlobalSecretFilePath)")
+        exit(EXIT_FAILURE)
+    }
     print("Success.")
 }
 

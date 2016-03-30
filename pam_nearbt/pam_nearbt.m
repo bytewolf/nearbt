@@ -165,63 +165,74 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         
         run(cfg->run_always);
         
-        const char *homedir = get_home_dir(pamh);
-        const char *secret_path = get_valid_secret_path(cfg->secret_path, homedir, cfg);
-        
-        NSString *secretPath = [NSString stringWithCString:secret_path encoding:NSUTF8StringEncoding];
-        if (![[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
-            Log(YES, @"Secret file %@ not exist", secretPath);
-            run(cfg->run_if_fail);
-            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
-            return (PAM_AUTH_ERR);
+        char const * secret = nil;
+        NSUUID * peripheralUUID = nil;
+        const char *password = nil;
+
+        // Read secret from local files
+        {
+            const char *homedir = get_home_dir(pamh);
+            const char *secret_path = get_valid_secret_path(cfg->secret_path, homedir, cfg);
+            
+            NSString *secretPath = [NSString stringWithCString:secret_path encoding:NSUTF8StringEncoding];
+            if (![[NSFileManager defaultManager] fileExistsAtPath:secretPath]) {
+                Log(YES, @"Secret file %@ not exist", secretPath);
+                goto failure;
+            }
+            secret = [[[NSString stringWithContentsOfFile:secretPath encoding:NSUTF8StringEncoding error:nil] stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] UTF8String];
+            if (!secret) {
+                Log(YES, @"Fail to read secret file %@", secretPath);
+                goto failure;
+            }
         }
         
-        NSString *peripheralConfigurationFilePath = kLocalPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
-        if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
-            peripheralConfigurationFilePath = kGlobalPeripheralConfigurationFilePath;
-        }
-        if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
-            Log(YES, @"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);
-            run(cfg->run_if_fail);
-            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
-            return (PAM_AUTH_ERR);
-        }
-        NSString *uuidString = [NSString stringWithContentsOfFile:peripheralConfigurationFilePath encoding:NSUTF8StringEncoding error:nil];
-        NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:uuidString];
-        
-        NBTCentralController *controller = [[NBTCentralController alloc] init];
-        controller.debug = cfg->debug;
-        
-        NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID] ofPeripheralUUID:uuid withMinimumRSSI:[NSNumber numberWithInt:cfg->min_rssi] withTimeout:cfg->timeout];
-        if (value == nil) {
-            Log(YES, @"Fail to read value from peripheral");
-            run(cfg->run_if_fail);
-            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
-            return (PAM_AUTH_ERR);
-        }
-        Log(cfg->debug, @"Read value: %@", value);
-        
-        const char *secret = [[[NSString stringWithContentsOfFile:secretPath encoding:NSUTF8StringEncoding error:nil] stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]] UTF8String];
-        if (!secret) {
-            Log(YES, @"Fail to read secret file %@", secretPath);
-            run(cfg->run_if_fail);
-            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
-            return (PAM_AUTH_ERR);
+        // Read peripheral UUID from local files
+        {
+            NSString *peripheralConfigurationFilePath = kLocalPeripheralConfigurationFilePath.stringByExpandingTildeInPath;
+            if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
+                peripheralConfigurationFilePath = kGlobalPeripheralConfigurationFilePath;
+            }
+            if (![[NSFileManager defaultManager] fileExistsAtPath:peripheralConfigurationFilePath]) {
+                Log(YES, @"Peripheral configuration file %@ not exist", peripheralConfigurationFilePath);
+                goto failure;
+            }
+            NSString *uuidString = [NSString stringWithContentsOfFile:peripheralConfigurationFilePath encoding:NSUTF8StringEncoding error:nil];
+            peripheralUUID = [[NSUUID alloc] initWithUUIDString:uuidString];
         }
         
-        const char *password = [[[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding] UTF8String];
-        int passwordMatched = check_password(secret, password);
-        
-        if (passwordMatched == 0) {
-            Log(YES, @"TOTP matched.");
-            run(cfg->run_if_success);
-            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_SUCCESS));
-            return (PAM_SUCCESS);
-        } else {
-            Log(YES, @"TOTP not matched.");
-            run(cfg->run_if_fail);
-            Log(cfg->debug, @"------ End of pam_nearbt: %d ------", (PAM_AUTH_ERR));
-            return (PAM_AUTH_ERR);
+        // Read TOTP from peripheral
+        {
+            NBTCentralController *controller = [[NBTCentralController alloc] init];
+            controller.debug = cfg->debug;
+            NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID] ofPeripheralUUID:peripheralUUID withMinimumRSSI:[NSNumber numberWithInt:cfg->min_rssi] withTimeout:cfg->timeout];
+            if (value == nil) {
+                Log(YES, @"Fail to read value from peripheral");
+                goto failure;
+            }
+            Log(cfg->debug, @"Read value: %@", value);
+            password = [[[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding] UTF8String];
         }
+
+        // Check the TOTP's validity with the secret
+        {
+            int passwordMatched = check_password(secret, password);
+            if (passwordMatched == 0) {
+                Log(YES, @"TOTP matched.");
+                goto success;
+            } else {
+                Log(YES, @"TOTP not matched.");
+                goto failure;
+            }
+        }
+        
+    failure:
+        run(cfg->run_if_fail);
+        Log(cfg->debug, @"------ End of pam_nearbt: return PAM_AUTH_ERR ------");
+        return (PAM_AUTH_ERR);
+        
+    success:
+        run(cfg->run_if_success);
+        Log(cfg->debug, @"------ End of pam_nearbt: return PAM_SUCCESS ------", (PAM_SUCCESS));
+        return (PAM_SUCCESS);
     }
 }

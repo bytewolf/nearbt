@@ -90,9 +90,9 @@
     NSNumber *RSSI = peripheral.RSSI;
     Log(self.debug, @"{{{ Peripheral did update RSSI, %@", RSSI);
     if (RSSI.integerValue > -15 || RSSI.integerValue < self.minimumRSSI.integerValue) {
-        Log(YES, @"RSSI(%@) is invalid.", RSSI);
-        Log(self.debug, @"}}}", RSSI);
-        [self cleanup];
+        [peripheral readRSSI];
+        Log(YES, @"RSSI(%@) is invalid, try read it again.", RSSI);
+        Log(self.debug, @"}}}");
         return;
     }
     Log(self.debug, @"}}} Try discover the peripheral's services …");

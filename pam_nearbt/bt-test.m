@@ -20,7 +20,7 @@ check_password(const char*secret, const char*password);
 extern const char *
 get_valid_secret_path(const char *path, const char *homedir);
 
-const int testMinimumRSSI = -80;
+const int testMinimumRSSI = -50;
 const int testAllowedTimeout = 10;
 const char *testSecretPath = "~/Downloads/secret.txt";
 const BOOL testDebug = YES;
@@ -45,6 +45,7 @@ int main(int argc, const char * argv[]) {
         // Read value from peripheral
 
         NBTCentralController *controller = [[NBTCentralController alloc] init];
+        controller.debug = testDebug;
         NSData *value = [controller readValueForCharacteristicUUID:[CBUUID UUIDWithString:kCharacteristicUUID] ofServiceUUID:[CBUUID UUIDWithString:kServiceUUID] ofPeripheralUUID:uuid withMinimumRSSI:[NSNumber numberWithInt:(testMinimumRSSI)] withTimeout:testAllowedTimeout];
         if (value == nil) {
             Log(YES, @"Fail to read TOTP.");

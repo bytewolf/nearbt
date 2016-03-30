@@ -217,7 +217,7 @@ pam_sm_authenticate(pam_handle_t *pamh, int flags,
         {
             int passwordMatched = check_password(secret, password);
             if (passwordMatched == 0) {
-                Log(YES, @"TOTP matched.");
+                Log(cfg->debug, @"TOTP matched.");
                 goto success;
             } else {
                 Log(YES, @"TOTP not matched.");

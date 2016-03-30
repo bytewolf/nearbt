@@ -233,6 +233,7 @@ func setupSecret() {
 
 func setupPAM() {
     print("Now you could add pam_nearbt.so in some files under /etc/pam.d/")
+    print("Restarting may be required.")
     print()
     print("e.g.")
     print("Add the following line at the beginning of /etc/pam.d/screensaver, so that you can unlock screensaver without password by using NearBT.")

@@ -115,6 +115,48 @@ func isSIPEnabled() -> Bool {
     return isEnabled
 }
 
+func printHelp() {
+    print("Usage:")
+    print()
+    print("\t" + "pam_nearbt-setup")
+    print("\t\t" + "Start setup.")
+    print()
+    print("\t" + "pam_nearbt-setup parameters")
+    print("\t\t" + "Show parameters for PAM configuration.")
+    print()
+}
+
+func printParameters() {
+    print("Parameters:")
+    print()
+    print("\t" + "debug")
+    print("\t\t" + "Enable debug message output (pam_nearbt log: …).")
+    print("\t\t" + "Not set by default.")
+    print()
+    print("\t" + "min_rssi=<between -128 and -15>")
+    print("\t\t" + "Minimum RSSI (received signal strength indicator).")
+    print("\t\t" + "Higher values reduce the valid scope of iOS devices.")
+    print("\t\t" + "-50 by default")
+    print()
+    print("\t" + "timeout=<unsigned integer>")
+    print("\t\t" + "Allowed timeout. Authentication will fail after specific seconds.")
+    print("\t\t" + "5 (seconds) by default")
+    print()
+    print("\t" + "secret_path=<absolute path>")
+    print("\t\t" + "Specify secret file path.")
+    print("\t\t" + "~/.config/pam_nearbt/secret and /usr/local/etc/pam_nearbt/secret are applied if secret_path is not specified.")
+    print()
+    print("\t" + "run_if_success=<absolute path>")
+    print("\t\t" + "Specify a script which will be run if authentication succeeds.")
+    print()
+    print("\t" + "run_if_fail=<absolute path>")
+    print("\t\t" + "Specify a script which will be run if authentication fails.")
+    print()
+    print("\t" + "run_always=<absolute path>")
+    print("\t\t" + "Specify a script which will be run when authentication begins.")
+    print()
+}
+
 func installPAM() {
     print("(1/3) Install PAM")
     print()
@@ -242,6 +284,27 @@ func setupPAM() {
 }
 
 // MARK: - main() -
+
+if Process.argc == 2 {
+    switch Process.arguments[1] {
+    case "parameters", "parameter", "parametres", "parametre", "params", "param":
+        printParameters()
+        exit(EXIT_SUCCESS)
+    case "-h", "help", "-help", "--help":
+        printHelp()
+        exit(EXIT_SUCCESS)
+    default:
+        print("Invalid command.")
+        printHelp()
+        exit(EXIT_FAILURE)
+    }
+}
+
+guard Process.argc == 1 else {
+    print("Invalid command.")
+    printHelp()
+    exit(EXIT_FAILURE)
+}
 
 installPAM()
 typeReturnToContinue()

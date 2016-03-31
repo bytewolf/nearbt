@@ -16,6 +16,7 @@
 		BD7D81161C95234500824724 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD7D81141C95234500824724 /* LaunchScreen.storyboard */; };
 		BD7D81601C9532E000824724 /* OneTimePassword.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD7D815F1C9532E000824724 /* OneTimePassword.framework */; };
 		BD7D81741C9539F300824724 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7D81731C9539F300824724 /* Constants.m */; };
+		BD9887EA1CAD089800C35E46 /* AboutTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9887E91CAD089800C35E46 /* AboutTableViewController.swift */; };
 		BD9DC89B1C9AE74A00CA0FB9 /* OTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9DC89A1C9AE74A00CA0FB9 /* OTPManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		BD7D81711C9539D800824724 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		BD7D81721C9539F200824724 /* NearBT-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NearBT-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		BD7D81731C9539F300824724 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		BD9887E91CAD089800C35E46 /* AboutTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutTableViewController.swift; sourceTree = "<group>"; };
 		BD9DC89A1C9AE74A00CA0FB9 /* OTPManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTPManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,6 +78,7 @@
 				BD0F25E31C9A7183003357F9 /* PeripheralController.swift */,
 				BD4149051C9B79D300C984C3 /* UserDefaults.swift */,
 				BD7D810D1C95234500824724 /* ViewController.swift */,
+				BD9887E91CAD089800C35E46 /* AboutTableViewController.swift */,
 				BD7D810F1C95234500824724 /* Main.storyboard */,
 				BD7D81121C95234500824724 /* Assets.xcassets */,
 				BD7D81141C95234500824724 /* LaunchScreen.storyboard */,
@@ -177,6 +180,7 @@
 				BD7D810E1C95234500824724 /* ViewController.swift in Sources */,
 				BD4149061C9B79D300C984C3 /* UserDefaults.swift in Sources */,
 				BD7D810C1C95234500824724 /* AppDelegate.swift in Sources */,
+				BD9887EA1CAD089800C35E46 /* AboutTableViewController.swift in Sources */,
 				BD9DC89B1C9AE74A00CA0FB9 /* OTPManager.swift in Sources */,
 				BD7D81741C9539F300824724 /* Constants.m in Sources */,
 			);

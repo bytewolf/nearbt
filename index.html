@@ -22,8 +22,8 @@
 
 
         <ul>
-          <li><a href="https://github.com/guoc/nearbt/releases/latest">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/guoc/nearbt/releases/latest">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/guoc/nearbt/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/guoc/nearbt/tarball/master">Download <strong>TAR Ball</strong></a></li>
           <li><a href="https://github.com/guoc/nearbt">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
@@ -40,6 +40,7 @@
 <li>Unlock OS X screen saver without typing password (just type return). <em>No need to store your password.</em>
 </li>
 <li>Add an extra authentication to log in OS X in addition to password. It works like two-factor authentication.</li>
+<li>Also works on authentication dialogs when you make changes on some preferences, and <code>sudo</code> command in Terminal.</li>
 </ul>
 
 <h2>
@@ -63,6 +64,16 @@
 <li>Only create a connection when an authentication starts. Stop the connection once the authentication finishes.</li>
 <li>Thanks to Bluetooth Low Energy, it's about 1% in 7 days from iOS's battery usage report.</li>
 </ul>
+
+<h3>
+<a id="customization" class="anchor" href="#customization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Customization</h3>
+
+<ul>
+<li>Minimum RSSI (received signal strength indicator). Higher values reduce the valid scope of iOS devices.</li>
+<li>Run scripts when authentication begins or if authentication succeeds or fails.</li>
+</ul>
+
+<p>Run <code>pam_nearbt-setup parameters</code> for more details.</p>
 
 <h2>
 <a id="compatibility" class="anchor" href="#compatibility" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Compatibility</h2>

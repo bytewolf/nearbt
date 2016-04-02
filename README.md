@@ -88,9 +88,11 @@ Know how to uninstall it before installation.
 Installation
 ------------
 
-- Open `NearBT.xcodeproj` in Xcode, build and run NearBT on your iOS devices.
-- Open `pam_nearbt-installer-signed.pkg` and complete the installation.
+- Download NearBT-iOS-version.zip and pam_nearbt-signed-version.pkg from [latest release](http://github.com/guoc/nearbt/releases/latest)
+- Extract NearBT-iOS-version.zip and open `NearBT.xcodeproj` in Xcode, build and run NearBT on your iOS devices.
+- Open `pam_nearbt-signed-version.pkg` and complete the installation.
 - Open Terminal, run `pam_nearbt-setup` and follow the instructions.
+- For available PAM parameters, run `pam_nearbt-setup parameters`.
 
 Alternatives
 ------------

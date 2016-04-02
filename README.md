@@ -8,6 +8,7 @@ With NearBT, you can,
 
 - Unlock OS X screen saver without typing password (just type return). *No need to store your password.*
 - Add an extra authentication to log in OS X in addition to password. It works like two-factor authentication.
+- Also works on authentication dialogs when you make changes on some preferences, and `sudo` command in Terminal.
 
 Features
 --------
@@ -24,6 +25,13 @@ Features
 
 * Only create a connection when an authentication starts. Stop the connection once the authentication finishes.
 * Thanks to Bluetooth Low Energy, it's about 1% in 7 days from iOS's battery usage report.
+
+### Customization
+
+* Minimum RSSI (received signal strength indicator). Higher values reduce the valid scope of iOS devices.
+* Run scripts when authentication begins or if authentication succeeds or fails.
+
+Run `pam_nearbt-setup parameters` for more details.
 
 Compatibility
 -------------

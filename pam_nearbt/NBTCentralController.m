@@ -68,7 +68,9 @@
     self.targetPeripheral = [central retrievePeripheralsWithIdentifiers:@[self.targetPeripheralUUID]].lastObject;
     if (self.targetPeripheral) {
         [central connectPeripheral:self.targetPeripheral options:nil];
+        Log(self.debug, @"Try connect peripheral: %@", self.targetPeripheral.name);
     } else {
+        Log(self.debug, @"Fail to get target peripheral.");
         [self cleanup];
     }
     Log(self.debug, @"}}}");

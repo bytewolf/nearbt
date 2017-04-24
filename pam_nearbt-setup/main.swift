@@ -9,18 +9,18 @@
 import Foundation
 import CoreBluetooth
 
-extension NSFileManager {
+extension FileManager {
     
-    func createConfigurationFileAtPath(path: String, contents data: NSData?) -> Bool {
-        guard let directoryPath = NSURL(fileURLWithPath: path, isDirectory: false).URLByDeletingLastPathComponent?.path else {
+    func createConfigurationFileAtPath(_ path: String, contents data: Data?) -> Bool {
+        guard let directoryPath = NSURL(fileURLWithPath: path, isDirectory: false).deletingLastPathComponent?.path else {
             fatalError("Fail to get directory of \(path)")
         }
         do {
-            try createDirectoryAtPath(directoryPath, withIntermediateDirectories: true, attributes: nil)
+            try createDirectory(atPath: directoryPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             fatalError("Fail to create directory of \(path)")
         }
-        let created = createFileAtPath(path, contents: data, attributes: [NSFilePosixPermissions:NSNumber(short:0400)])
+        let created = createFile(atPath: path, contents: data, attributes: [FileAttributeKey.posixPermissions.rawValue:NSNumber(value: 0400 as Int16)])
         return created
     }
 
@@ -28,54 +28,54 @@ extension NSFileManager {
 
 class CentralDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     
-    var valueReadFromPeripheral = dispatch_semaphore_create(0)
+    var valueReadFromPeripheral = DispatchSemaphore(value: 0)
     var targetPeripheral: CBPeripheral?
     
     let serviceUUID = CBUUID(string: kServiceUUID)
     let characteristicUUID = CBUUID(string: kCharacteristicUUID)
     
-    func centralManagerDidUpdateState(central: CBCentralManager) {
-        if central.state == .PoweredOn {
-            central.scanForPeripheralsWithServices([serviceUUID], options: nil)
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        if central.state == .poweredOn {
+            central.scanForPeripherals(withServices: [serviceUUID], options: nil)
         }
     }
     
-    func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         peripheral.delegate = self
         targetPeripheral = peripheral
-        central.connectPeripheral(peripheral, options: nil)
+        central.connect(peripheral, options: nil)
     }
     
-    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         peripheral.discoverServices([serviceUUID])
     }
     
-    func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-        print("Fail to connect peripheral: \(error?.localizedDescription)")
+    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+        print("Fail to connect peripheral: \(error?.localizedDescription ?? "no error message")")
     }
     
-    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
-        guard let service = peripheral.services?.last where service.UUID == serviceUUID else {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        guard let service = peripheral.services?.last, service.uuid == serviceUUID else {
             print("Target service is not found.")
             return
         }
-        peripheral.discoverCharacteristics([characteristicUUID], forService:service)
+        peripheral.discoverCharacteristics([characteristicUUID], for:service)
     }
     
-    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
-        guard let characteristic = service.characteristics?.last where characteristic.UUID == characteristicUUID else {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        guard let characteristic = service.characteristics?.last, characteristic.uuid == characteristicUUID else {
             print("Target characteristic is not found.")
             return
         }
-        peripheral.readValueForCharacteristic(characteristic)
+        peripheral.readValue(for: characteristic)
     }
     
-    func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if let error = error {
             fatalError("Setup failure: \(error.localizedDescription)")
         }
         
-        dispatch_semaphore_signal(valueReadFromPeripheral)
+        valueReadFromPeripheral.signal()
         
         return
     }
@@ -94,12 +94,12 @@ func typeReturnToContinue() {
 
 func isSIPEnabled() -> Bool {
     let csrutilPath = "/usr/bin/csrutil"
-    if NSFileManager.defaultManager().fileExistsAtPath(csrutilPath) == false {
+    if FileManager.default.fileExists(atPath: csrutilPath) == false {
         return false
     }
-    let pipe = NSPipe()
-    let task: NSTask = {
-        let task = NSTask()
+    let pipe = Pipe()
+    let task: Process = {
+        let task = Process()
         task.launchPath = csrutilPath
         task.arguments = ["status"]
         task.standardOutput = pipe
@@ -108,10 +108,10 @@ func isSIPEnabled() -> Bool {
     task.launch()
     
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    guard let output = String(data: data, encoding: NSUTF8StringEncoding) else {
+    guard let output = String(data: data, encoding: String.Encoding.utf8) else {
         fatalError("Fail to check System Integrity Protection status.")
     }
-    let isEnabled = output.containsString("enabled")
+    let isEnabled = output.contains("enabled")
     return isEnabled
 }
 
@@ -162,7 +162,7 @@ func installPAM() {
     print()
     let pamSourcePath = "/usr/local/lib/security/pam_nearbt.so"
     let pamTargetPath = "/usr/lib/pam/pam_nearbt.so"
-    if NSFileManager.defaultManager().fileExistsAtPath(pamTargetPath) {
+    if FileManager.default.fileExists(atPath: pamTargetPath) {
         print("Already installed.")
         return
     }
@@ -193,16 +193,16 @@ func installPAM() {
     typeReturnToContinue()
     let script = "do shell script \"\(command_ln); \(command_chown); \(command_chmod)\" with administrator privileges"
     let appleScript = NSAppleScript(source: script)
-    var errorInfo = NSDictionary?()
+    var errorInfo: NSDictionary? = NSDictionary()
     guard appleScript?.executeAndReturnError(&errorInfo) != nil else {
         print("Fail to install pam_nearbt.")
         guard let errorInfo = errorInfo else {
             fatalError("Fail to read error information.")
         }
-        guard let errorNumber = errorInfo[NSAppleScriptErrorNumber] as? NSNumber else {
+        guard let errorNumber = errorInfo[NSAppleScript.errorNumber] as? NSNumber else {
             fatalError("Fail to read error number.")
         }
-        switch errorNumber.integerValue {
+        switch errorNumber.intValue {
         case -128:
             print("Canceled.")
             exit(EXIT_FAILURE)
@@ -223,25 +223,25 @@ func setupPeripheral() {
     typeReturnToContinue()
     
     let delegate = CentralDelegate()
-    let manager = CBCentralManager(delegate: delegate, queue: dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0))
+    let manager = CBCentralManager(delegate: delegate, queue: DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive))
     
-    dispatch_semaphore_wait(delegate.valueReadFromPeripheral, DISPATCH_TIME_FOREVER)
+    _ = delegate.valueReadFromPeripheral.wait(timeout: DispatchTime.distantFuture)
     
     guard let targetPeripheral = delegate.targetPeripheral else {
         manager.delegate = nil
         fatalError("Fail to get peripheral UUID.")
     }
-    let peripheralConfigurationFilePath = NSString(string:kGlobalPeripheralConfigurationFilePath).stringByExpandingTildeInPath
-    if NSFileManager.defaultManager().fileExistsAtPath(peripheralConfigurationFilePath) {
+    let peripheralConfigurationFilePath = NSString(string:kGlobalPeripheralConfigurationFilePath).expandingTildeInPath
+    if FileManager.default.fileExists(atPath: peripheralConfigurationFilePath) {
         print("\(peripheralConfigurationFilePath) exists, overwrite? (y/n) ", terminator:"")
-        if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
+        if let response = readLine(strippingNewline: true), response != "y" && response != "Y" {
             manager.delegate = nil
             print("Canceled.")
             return
         }
     }
     
-    let created = NSFileManager.defaultManager().createConfigurationFileAtPath(peripheralConfigurationFilePath, contents: targetPeripheral.identifier.UUIDString.dataUsingEncoding(NSUTF8StringEncoding))
+    let created = FileManager.default.createConfigurationFileAtPath(peripheralConfigurationFilePath, contents: targetPeripheral.identifier.uuidString.data(using: String.Encoding.utf8))
     if !created {
         print("Fail to create peripheral at \(peripheralConfigurationFilePath)")
         exit(EXIT_FAILURE)
@@ -254,18 +254,18 @@ func setupPeripheral() {
 func setupSecret() {
     print("(3/3) Setup Secret")
     print()
-    if NSFileManager.defaultManager().fileExistsAtPath(kDefaultGlobalSecretFilePath) {
+    if FileManager.default.fileExists(atPath: kDefaultGlobalSecretFilePath) {
         print("\(kDefaultGlobalSecretFilePath) exists, overwrite? (y/n) ", terminator:"")
-        if let response = readLine(stripNewline: true) where response != "y" && response != "Y" {
+        if let response = readLine(strippingNewline: true), response != "y" && response != "Y" {
             print("Canceled.")
             return
         }
     }
     var secret = ""
     repeat {
-        secret = String.fromCString(getpass("Please enter your secret: ")) ?? ""
+        secret = String(cString: getpass("Please enter your secret: ")) 
     } while secret.isEmpty
-    let created = NSFileManager.defaultManager().createConfigurationFileAtPath(kDefaultGlobalSecretFilePath, contents: secret.dataUsingEncoding(NSUTF8StringEncoding))
+    let created = FileManager.default.createConfigurationFileAtPath(kDefaultGlobalSecretFilePath, contents: secret.data(using: String.Encoding.utf8))
     if !created {
         print("Fail to create secret at \(kDefaultGlobalSecretFilePath)")
         exit(EXIT_FAILURE)
@@ -285,8 +285,8 @@ func setupPAM() {
 
 // MARK: - main() -
 
-if Process.argc == 2 {
-    switch Process.arguments[1] {
+if CommandLine.argc == 2 {
+    switch CommandLine.arguments[1] {
     case "parameters", "parameter", "parametres", "parametre", "params", "param":
         printParameters()
         exit(EXIT_SUCCESS)
@@ -300,7 +300,7 @@ if Process.argc == 2 {
     }
 }
 
-guard Process.argc == 1 else {
+guard CommandLine.argc == 1 else {
     print("Invalid command.")
     printHelp()
     exit(EXIT_FAILURE)

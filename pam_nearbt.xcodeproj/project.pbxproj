@@ -229,6 +229,7 @@
 					};
 					BD5019601CA2071A00C6E6A8 = {
 						CreatedOnToolsVersion = 7.3;
+						LastSwiftMigration = 0830;
 					};
 				};
 			};
@@ -432,6 +433,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "pam_nearbt-setup/pam_nearbt-setup-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -444,6 +446,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "pam_nearbt-setup/pam_nearbt-setup-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <IOBluetooth/IOBluetooth.h>
+#import <CoreBluetooth/CoreBluetooth.h>
 
 @interface NBTCentralController : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 

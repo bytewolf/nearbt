@@ -13,27 +13,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        UIApplication.sharedApplication().setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
-        let userNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
-        UIApplication.sharedApplication().registerUserNotificationSettings(userNotificationSettings)
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplicationBackgroundFetchIntervalMinimum)
+        let userNotificationSettings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+        UIApplication.shared.registerUserNotificationSettings(userNotificationSettings)
         if UserDefaults.sharedUserDefaults.enabled {
             PeripheralController.sharedController.start()
         }
         return true
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         if let viewController = window?.rootViewController as? ViewController {
             viewController.resetViewAnimated(true)
         }
     }
     
-    func application(application: UIApplication, performFetchWithCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        completionHandler(.NoData)
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        completionHandler(.noData)
     }
 
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         /* 
            On iOS 9, this is not a good place to remind user that the application will terminate.
            This method is called only when: the app is in foreground, users double tap home button,
@@ -42,14 +42,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         */
     }
     
-    func applicationDidReceiveMemoryWarning(application: UIApplication) {
+    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
         let notification: UILocalNotification = {
             let notification = UILocalNotification()
             notification.alertTitle = "NearBT will terminate"
             notification.alertBody = "Relaunch to keep it working in background."
             return notification
         }()
-        UIApplication.sharedApplication().presentLocalNotificationNow(notification)
+        UIApplication.shared.presentLocalNotificationNow(notification)
     }
     
 }

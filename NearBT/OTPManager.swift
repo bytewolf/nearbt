@@ -15,24 +15,24 @@ class OTPManager {
     
     static let sharedManager = OTPManager()
     
-    private let userDefaultsKeyHasSetSecret = "hasSetSecret"
+    fileprivate let userDefaultsKeyHasSetSecret = "hasSetSecret"
     var hasSetSecret: Bool {
         get {
-            return NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyHasSetSecret)
+            return Foundation.UserDefaults.standard.bool(forKey: userDefaultsKeyHasSetSecret)
         }
         set {
-            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: userDefaultsKeyHasSetSecret)
+            Foundation.UserDefaults.standard.set(newValue, forKey: userDefaultsKeyHasSetSecret)
         }
     }
     
-    private init() {}
+    fileprivate init() {}
     
-    private func clear() {
+    fileprivate func clear() {
         let query = [kSecClass as String : kSecClassGenericPassword]
-        SecItemDelete(query)
+        SecItemDelete(query as CFDictionary)
     }
     
-    var secret: NSData? {
+    var secret: Data? {
         get {
             guard hasSetSecret else {
                 return nil
@@ -41,13 +41,13 @@ class OTPManager {
                 kSecClass as String : kSecClassGenericPassword,
                 kSecAttrAccount as String : keychainAccountName,
                 kSecReturnData as String : kCFBooleanTrue,
-                kSecMatchLimit as String : kSecMatchLimitOne ]
+                kSecMatchLimit as String : kSecMatchLimitOne ] as [String : Any]
             var result: AnyObject?
-            let status = SecItemCopyMatching(query, &result)
+            let status = SecItemCopyMatching(query as CFDictionary, &result)
             guard status == errSecSuccess else {
                 return nil
             }
-            guard let secret = result as? NSData else {
+            guard let secret = result as? Data else {
                 fatalError("Fail to read secret from keychain: \(status)")
             }
             return secret
@@ -65,9 +65,9 @@ class OTPManager {
                 kSecClass as String : kSecClassGenericPassword,
                 kSecAttrAccessible as String : secAttrAccessible,
                 kSecAttrAccount as String : keychainAccountName,
-                kSecValueData as String : secret ]
-            SecItemDelete(query)
-            let status = SecItemAdd(query, nil)
+                kSecValueData as String : secret ] as [String : Any]
+            SecItemDelete(query as CFDictionary)
+            let status = SecItemAdd(query as CFDictionary, nil)
             if (status == errSecSuccess) {
                 hasSetSecret = true
             } else {
@@ -81,11 +81,11 @@ class OTPManager {
             return nil
         }
         
-        let deviceName = UIDevice.currentDevice().name
-        let token = OTPToken(type: .Timer, secret: secret, name: "NearBT Token", issuer: deviceName)
+        let deviceName = UIDevice.current.name
+        let token = OTPToken(type: .timer, secret: secret, name: "NearBT Token", issuer: deviceName)
         
-        token.updatePassword()
-        let password = token.password
+        token?.updatePassword()
+        let password = token?.password
         return password
     }
     

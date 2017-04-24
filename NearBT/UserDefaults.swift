@@ -10,25 +10,25 @@ class UserDefaults {
     
     static let sharedUserDefaults = UserDefaults()
     
-    private init() {}
+    fileprivate init() {}
     
     let userDefaultsKeyEnabled = "enabled"
     var enabled: Bool {
         get {
-            return NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyEnabled)
+            return Foundation.UserDefaults.standard.bool(forKey: userDefaultsKeyEnabled)
         }
         set {
-            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: userDefaultsKeyEnabled)
+            Foundation.UserDefaults.standard.set(newValue, forKey: userDefaultsKeyEnabled)
         }
     }
     
     let userDefaultsKeyAvailableWhenDeviceLocked = "availableWhenDeviceLocked"
     var availableWhenDeviceLocked: Bool {
         get {
-            return NSUserDefaults.standardUserDefaults().boolForKey(userDefaultsKeyAvailableWhenDeviceLocked)
+            return Foundation.UserDefaults.standard.bool(forKey: userDefaultsKeyAvailableWhenDeviceLocked)
         }
         set {
-            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: userDefaultsKeyAvailableWhenDeviceLocked)
+            Foundation.UserDefaults.standard.set(newValue, forKey: userDefaultsKeyAvailableWhenDeviceLocked)
         }
     }
 }

@@ -12,7 +12,7 @@ class AboutTableViewController: UITableViewController {
 
     @IBOutlet weak var versionLabel: UILabel! {
         didSet {
-            guard let info = NSBundle.mainBundle().infoDictionary,
+            guard let info = Bundle.main.infoDictionary,
                 let shortVersion = info["CFBundleShortVersionString"] as? String,
                 let buildVersion = info["CFBundleVersion"] as? String else {
                     assertionFailure("Fail to get version number.")
@@ -31,7 +31,7 @@ class AboutTableViewController: UITableViewController {
         tableView.estimatedRowHeight = 100
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
 

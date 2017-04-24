@@ -21,8 +21,8 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    @IBAction func availableWhenDeviceLockedSwitchValueChanged(sender: UISwitch) {
-        UserDefaults.sharedUserDefaults.availableWhenDeviceLocked = availableWhenDeviceLockedSwitch.on
+    @IBAction func availableWhenDeviceLockedSwitchValueChanged(_ sender: UISwitch) {
+        UserDefaults.sharedUserDefaults.availableWhenDeviceLocked = availableWhenDeviceLockedSwitch.isOn
         resetViewAnimated(true)
         OTPManager.sharedManager.resaveSecret()
     }
@@ -32,9 +32,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func enabledSwitchValueChanged() {
-        UserDefaults.sharedUserDefaults.enabled = enabledSwitch.on
+        UserDefaults.sharedUserDefaults.enabled = enabledSwitch.isOn
         resetViewAnimated(true)
-        if enabledSwitch.on {
+        if enabledSwitch.isOn {
             PeripheralController.sharedController.start()
         } else {
             PeripheralController.sharedController.stop()
@@ -43,29 +43,29 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(handleBluetoothStateChanged(_:)), name: notificationKeyBluetoothStateChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBluetoothStateChanged(_:)), name: NSNotification.Name(rawValue: notificationKeyBluetoothStateChanged), object: nil)
     }
     
-    func handleBluetoothStateChanged(notification: NSNotification) {
+    func handleBluetoothStateChanged(_ notification: Notification) {
         resetViewAnimated(true)
     }
     
-    func resetViewAnimated(animated: Bool) {
-        guard isViewLoaded() else {
+    func resetViewAnimated(_ animated: Bool) {
+        guard isViewLoaded else {
             return
         }
         
         let hasSetSecret = OTPManager.sharedManager.hasSetSecret
         let enabled = UserDefaults.sharedUserDefaults.enabled
         enabledSwitch.setOn(enabled, animated: animated)
-        enabledSwitch.enabled = hasSetSecret
+        enabledSwitch.isEnabled = hasSetSecret
         
         let availableWhenDeviceLocked = UserDefaults.sharedUserDefaults.availableWhenDeviceLocked
         availableWhenDeviceLockedSwitch.setOn(availableWhenDeviceLocked, animated: animated)
-        availableWhenDeviceLockedSwitch.enabled = enabled
+        availableWhenDeviceLockedSwitch.isEnabled = enabled
         
         switch PeripheralController.sharedController.bluetoothState {
-        case .Unknown:
+        case .unknown:
             informationLabel.text = "Waiting bluetooth …"
             if UserDefaults.sharedUserDefaults.enabled == false {
                 informationLabel.text = "Please turn on \"Enabled\" switch."
@@ -73,13 +73,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
             if OTPManager.sharedManager.hasSetSecret == false {
                 informationLabel.text = "Please set secret."
             }
-        case .Unsupported:
+        case .unsupported:
             informationLabel.text = "Bluetooth low energy is not supported."
-        case .PowerOff:
+        case .powerOff:
             informationLabel.text = "Please turn on Bluetooth."
-        case .PairingRequired:
+        case .pairingRequired:
             informationLabel.text = "Pairing required. This will be done automatically when you run pam_nearbt-setup on your Mac."
-        case .Ready:
+        case .ready:
             if hasSetSecret {
                 var text = "Tap switch to turn on/off."
                 if enabled {
@@ -91,7 +91,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             }
         }
         
-        if invisibleTextField.editing {
+        if invisibleTextField.isEditing {
             informationLabel.text = "- Type secret and end with return.\n"
                 + "- Secret and your typing will not be displayed.\n"
                 + "- Typing return directly makes no change."
@@ -100,16 +100,16 @@ class ViewController: UIViewController, UITextFieldDelegate {
         invisibleTextField.text = nil
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         resetViewAnimated(false)
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         resetViewAnimated(true)
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         invisibleTextField.resignFirstResponder()
         guard let secretString = textField.text else {
             resetViewAnimated(true)
@@ -120,7 +120,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             informationLabel.text = "Cancelled."
             return true
         }
-        OTPManager.sharedManager.secret = secretString.dataUsingEncoding(NSUTF8StringEncoding)!
+        OTPManager.sharedManager.secret = secretString.data(using: String.Encoding.utf8)!
         resetViewAnimated(true)
         informationLabel.text = "Secret changed."
         return true

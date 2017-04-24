@@ -105,7 +105,7 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
     func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
         print("add service")
         if (error != nil) {
-            print(error)
+            print(error!)
         }
         peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [serviceUUID]])
     }
@@ -131,7 +131,7 @@ class PeripheralController : NSObject, CBPeripheralManagerDelegate {
             peripheral.respond(to: request, withResult: .invalidOffset)
             return
         }
-        request.value = updatedValue.subdata(in: NSMakeRange(request.offset, updatedValue.count - request.offset))
+        request.value = updatedValue.subdata(in: request.offset ..< updatedValue.count)
         request.value = updatedValue
         peripheralManager.respond(to: request, withResult: .success)
         return

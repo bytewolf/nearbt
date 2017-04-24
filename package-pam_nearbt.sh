@@ -8,7 +8,7 @@ xcodebuild clean install -project pam_nearbt.xcodeproj -target pam_nearbt-setup 
 
 pkgbuild --root "${TEMP_DIR}" \
     --identifier "name.guoc.pam_nearbt" \
-    --version "0.2" \
+    --version "0.3" \
     --install-location "/usr/local" \
     "pam_nearbt.pkg"
 
